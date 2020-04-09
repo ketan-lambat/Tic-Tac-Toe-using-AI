@@ -1,106 +1,14 @@
-import pygame
-from pygame.locals import *
 from math import inf
 from random import choice
 import platform
 import time
 from os import system
 
-# global variables
-WIDTH = 400
-HEIGHT = 400
-
-# colours
-WHITE = (255, 255, 255)
-LINE_COLOUR = (10, 10, 10)
-BG_COLOR = (80, 80, 80)
 
 TTT = [[None]*3, [None]*3, [None]*3]
-# USER = -1
-# AI = 1
+USER = -1
+AI = 1
 
-# initialize pygame window
-pygame.init()
-FPS = 30
-CLOCK = pygame.time.Clock()
-screen = pygame.display.set_mode((WIDTH, HEIGHT+100))
-pygame.display.set_caption("Tic Tac Toe with AI")
-
-# load the images/sprites
-x_img = pygame.image.load("X.png")
-o_img = pygame.image.load("O.png")
-
-# resize to proper scale
-x_img = pygame.transform.scale(x_img, (80, 80))
-o_img = pygame.transform.scale(o_img, (80, 80))
-
-
-def game_start():
-    screen.fill(BG_COLOR)
-
-    # line(surface, color, start_pos, end_pos, width)
-
-    # vertical lines
-    pygame.draw.line(screen, LINE_COLOUR, (WIDTH/3, 0),
-                     (WIDTH/3, HEIGHT), 7)
-    pygame.draw.line(screen, LINE_COLOUR, (WIDTH/3*2, 0),
-                     (WIDTH/3*2, HEIGHT), 7)
-
-    # horizontal lines
-    pygame.draw.line(screen, LINE_COLOUR, (0, HEIGHT/3),
-                     (WIDTH, HEIGHT/3), 7)
-    pygame.draw.line(screen, LINE_COLOUR, (0, HEIGHT/3*2),
-                     (WIDTH, HEIGHT/3*2), 7)
-
-    # print_status()
-
-
-def print_status(playerTurn, isOver, winner):
-
-    if not isOver:
-        if playerTurn == 'x':
-            msg = " User(X)'s Turn"
-        elif playerTurn == 'o':
-            msg = " AI(O)'s Turn"
-    elif isOver:
-        if winner == 'x':
-            msg = "YOU WIN !!"
-        elif winner == 'o':
-            msg = "AI WINs !! You Lose"
-        else:
-            msg = "Game Tied"
-
-    # render(text, antialias, color, background=None) -> Surface
-    font = pygame.font.Font(None, 30)
-    text = font.render(msg, 1, (255, 255, 255))
-
-    # rendered msg on the screen
-    screen.fill((0, 0, 0,), (0, 400, 500, 100))
-    text_rect = text.get_rect(center=(WIDTH/2, 500-50))
-    screen.blit(text, text_rect)
-    pygame.display.update()
-
-
-def draw_OX(row, col, OX):
-    if row == 1:
-        posX = 30
-    if row == 2:
-        posX = WIDTH/3 + 30
-    if row == 3:
-        posX = WIDTH/3*2 + 30
-
-    if col == 1:
-        posY = 30
-    if col == 2:
-        posY = HEIGHT/3 + 30
-    if col == 3:
-        posY = HEIGHT/3*2 + 30
-
-    if(OX == 'x'):
-        screen.blit(x_img, (posY, posX))
-    else:
-        screen.blit(o_img, (posY, posX))
-    pygame.display.update()
 
 def eval(TTT):
     if is_winner(TTT) == 'x':
@@ -154,7 +62,6 @@ def valid_move(x, y):
 def set_move(x, y, OX):
     if valid_move(x, y):
         TTT[x][y] = OX
-        draw_OX(x+1, y+1, OX)
         return True
     else:
         return False
@@ -226,8 +133,6 @@ def ai_turn():
     print("AI TURN")
     print_board(TTT)
 
-    print_status('o', False, False)
-
     if depth == 9:
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
@@ -255,8 +160,6 @@ def user_turn():
     print("USER TURN")
     print_board(TTT)
 
-    print_status('x', False, False)
-
     while move < 1 or move > 9:
         try:
             move = int(input("Enter ip move position (1...9):"))
@@ -275,9 +178,6 @@ def user_turn():
 
 def main():
     clean()
-
-    game_start()
-
     first_move = ''
     while first_move != 'y' and first_move != 'n':
         try:
@@ -301,19 +201,15 @@ def main():
         print("USER TURN")
         print_board(TTT)
         print("YOU WIN !!")
-        print_status(False, True, 'x')
-
     elif is_winner(TTT) == 'o':
         clean()
         print("AI TURN")
         print_board(TTT)
         print("AI WINS !!")
-        print_status(False, True, 'o')
     else:
         clean()
         print_board(TTT)
         print("DRAW -_-")
-        print_status(False, True, False)
 
 
 if __name__ == '__main__':
