@@ -124,6 +124,38 @@ def draw_OX(row, col, OX):
     pygame.display.update()
 
 
+def draw_win_line(TTT):
+    # winning rows
+    for row in range(0, 3):
+        if ((TTT[row][0] == TTT[row][1] == TTT[row][2]) and (TTT[row][0] is not None)):
+            # WINNER = TTT[row][0]
+            pygame.draw.line(screen, (250, 0, 0),
+                             (0, (row+1)*HEIGHT/3-HEIGHT/6),
+                             (WIDTH, (row+1)*HEIGHT/3-HEIGHT/6), 4)
+            break
+
+    # winning columns
+    for col in range(0, 3):
+        if((TTT[0][col] == TTT[1][col] == TTT[2][col])and(TTT[0][col] is not None)):
+            # WINNER = TTT[0][col]
+            pygame.draw.line(screen, (250, 0, 0),
+                             ((col+1)*WIDTH/3-WIDTH/6, 0),
+                             ((col+1)*WIDTH/3-WIDTH/6), HEIGHT, 4)
+            break
+
+    # diagonal winners
+    if((TTT[0][0] is not None) and (TTT[0][0] == TTT[1][1] == TTT[2][2])):
+        # WINNER = TTT[0][0]
+        pygame.draw.line(screen, (250, 70, 70), (50, 50), (350, 350), 4)
+
+    if((TTT[0][2] is not None) and (TTT[0][2] == TTT[1][1] == TTT[2][0])):
+        # WINNER = TTT[0][2]
+        pygame.draw.line(screen, (250, 70, 70), (350, 50), (50, 350), 4)
+
+    # if(all([all(row) for row in TTT]) and WINNER is None):
+    #     TIE = True
+    # draw_status()
+
 def eval(TTT):
     if is_winner(TTT) == 'x':
         score = -1
@@ -333,6 +365,7 @@ def main():
                     print("USER TURN")
                     print_board(TTT)
                     print("YOU WIN !!")
+                    draw_win_line(TTT)
                     print_status(False, True, 'x')
                     # pygame.event.get()
                     # running = play_again()
@@ -343,6 +376,7 @@ def main():
                     print("AI TURN")
                     print_board(TTT)
                     print("AI WINS !!")
+                    draw_win_line(TTT)
                     print_status(False, True, 'o')
                     # pygame.event.get()
                     # running = play_again()
