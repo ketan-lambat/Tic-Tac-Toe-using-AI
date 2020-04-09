@@ -1,10 +1,11 @@
 import pygame
-from pygame.locals import *
-from math import inf
-from random import choice
-import platform
 import time
+import platform
+import sys
+from math import inf
 from os import system
+from random import choice
+from pygame.locals import *
 
 # global variables
 WIDTH = 400
@@ -33,6 +34,25 @@ o_img = pygame.image.load("O.png")
 # resize to proper scale
 x_img = pygame.transform.scale(x_img, (80, 80))
 o_img = pygame.transform.scale(o_img, (80, 80))
+
+
+def reset_game(TTT):
+    time.sleep(2)
+    game_start()
+    TTT = [[None]*3, [None]*3, [None]*3]
+
+
+# def play_again():
+#     while True:
+#         pygame.display.update()
+#         sys.stdout.write("Play again? [Y/N] : \n  ")
+#         answer = input().lower()
+#         if (answer == "y"):
+#             return True
+#         elif (answer == "n"):
+#             sys.exit(0)
+#         else:
+#             print("Please respond with 'Y' or 'N'.\n")
 
 
 def game_start():
@@ -100,7 +120,9 @@ def draw_OX(row, col, OX):
         screen.blit(x_img, (posY, posX))
     else:
         screen.blit(o_img, (posY, posX))
+
     pygame.display.update()
+
 
 def eval(TTT):
     if is_winner(TTT) == 'x':
@@ -194,7 +216,6 @@ def minimax(TTT, depth, isMax):
 
 
 def clean():
-
     os_name = platform.system().lower()
     if 'windows' in os_name:
         system('cls')
@@ -277,43 +298,68 @@ def main():
     clean()
 
     game_start()
-
     first_move = ''
     while first_move != 'y' and first_move != 'n':
         try:
-            first_move = input('Want to start first?[Y/N]: ').lower()
+            first_move = input(
+                'Want to start first?[Y/N]: ').lower()
         except (EOFError, KeyboardInterrupt):
             print('Bye')
             exit()
         except (KeyError, ValueError):
             print('Bad Input')
 
-    while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
-        if first_move == 'n':
-            ai_turn()
-            first_move = ''
+    running = True
 
-        user_turn()
-        ai_turn()
+    while running:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                running = False
+                pygame.quit()
+            else:
 
-    if is_winner(TTT) == 'x':
-        clean()
-        print("USER TURN")
-        print_board(TTT)
-        print("YOU WIN !!")
-        print_status(False, True, 'x')
+                while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
+                    if first_move == 'n':
+                        ai_turn()
+                        first_move = ''
 
-    elif is_winner(TTT) == 'o':
-        clean()
-        print("AI TURN")
-        print_board(TTT)
-        print("AI WINS !!")
-        print_status(False, True, 'o')
-    else:
-        clean()
-        print_board(TTT)
-        print("DRAW -_-")
-        print_status(False, True, False)
+                    user_turn()
+                    ai_turn()
+                    pygame.event.pump()
+
+                # game over conditions
+                if is_winner(TTT) == 'x':
+                    clean()
+                    print("USER TURN")
+                    print_board(TTT)
+                    print("YOU WIN !!")
+                    print_status(False, True, 'x')
+                    # pygame.event.get()
+                    # running = play_again()
+                    reset_game(TTT)
+
+                elif is_winner(TTT) == 'o':
+                    clean()
+                    print("AI TURN")
+                    print_board(TTT)
+                    print("AI WINS !!")
+                    print_status(False, True, 'o')
+                    # pygame.event.get()
+                    # running = play_again()
+                    reset_game(TTT)
+                else:
+                    clean()
+                    print_board(TTT)
+                    print("DRAW -_-")
+                    print_status(False, True, False)
+                    # pygame.event.get()
+                    # running = play_again()
+                    reset_game(TTT)
+
+                exit()
+
+            pygame.event.pump()
+            CLOCK.tick(FPS)
 
 
 if __name__ == '__main__':
