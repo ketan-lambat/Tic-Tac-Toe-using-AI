@@ -167,19 +167,32 @@ def user_turn():
             move_possib = set_move(coord[0], coord[1], 'x')
 
             if not move_possib:
-                print("Incorrect ip")
+                print("Incorrect Move")
                 move = -1
         except (EOFError, KeyboardInterrupt):
             print('Bye')
             exit()
         except (KeyError, ValueError):
-            print('Bad choice')
+            print('Bad Input')
 
 
 def main():
     clean()
+    first_move = ''
+    while first_move != 'y' and first_move != 'n':
+        try:
+            first_move = input('Want to start first?[Y/N]: ').lower()
+        except (EOFError, KeyboardInterrupt):
+            print('Bye')
+            exit()
+        except (KeyError, ValueError):
+            print('Bad Input')
 
     while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
+        if first_move == 'n':
+            ai_turn()
+            first_move = ''
+
         user_turn()
         ai_turn()
 
