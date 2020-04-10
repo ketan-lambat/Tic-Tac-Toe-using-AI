@@ -110,7 +110,7 @@ def print_status(playerTurn, isOver, winner, screen):
 
 
 def userClick(TTT, screen):
-    print_status('x', False, False, screen)
+    # print_status('x', False, False, screen)
     x, y = pygame.mouse.get_pos()
 
     # col clicked
@@ -435,6 +435,7 @@ def ai_turn(TTT, screen):
     set_move(x, y, 'o', screen)
     print_board(TTT)
     time.sleep(1)
+    print_status('x', False, False, screen)
 
 
 def user_turn(TTT, screen):
