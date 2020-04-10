@@ -312,6 +312,41 @@ def alpha_beta(TTT, alpha, beta, isMax):
     return best
 
 
+def minimax_depth_limit(TTT, depth, isMax):
+    if isMax:
+        best = [-1, -1, -inf]
+    else:
+        best = [-1, -1, inf]
+
+    if len(empty_cells(TTT)) == 0 or is_winner(TTT):
+        score = eval(TTT)
+        return [-1, -1, score]
+
+    # cutoff at depth of 3 and evaluate TTT state
+    if depth == 3:
+        result = eval_heuristic(TTT)
+        return [-1, -1, result]
+
+    for cell in empty_cells(TTT):
+        x, y = cell[0], cell[1]
+        if isMax:
+            TTT[x][y] = 'o'
+        else:
+            TTT[x][y] = 'x'
+        score = minimax_depth_limit(TTT, depth+1, not isMax)
+        TTT[x][y] = None
+        score[0], score[1] = x, y
+
+        if isMax:
+            if score[2] > best[2]:
+                best = score
+        else:
+            if score[2] < best[2]:
+                best = score
+
+    return best
+
+
 def depth_alphabeta(TTT, depth, alpha, beta, isMax):
     if isMax:
         best = [-1, -1, -inf]
@@ -429,7 +464,8 @@ def ai_turn(TTT, screen):
     else:
         # move = minimax(TTT, True)
         # move = alpha_beta(TTT, -inf, inf, True)
-        move = depth_alphabeta(TTT, 0, -inf, inf, True)
+        move = minimax_depth_limit(TTT, 0, True)
+        # move = depth_alphabeta(TTT, 0, -inf, inf, True)
         x, y = move[0], move[1]
 
     set_move(x, y, 'o', screen)
