@@ -134,10 +134,7 @@ def userClick(TTT, screen):
         row = None
 
     if(row and col and TTT[row-1][col-1] is None):
-        # global OX
         set_move(row-1, col-1, 'x', screen)
-        # draw_OX(row, col, 'x')
-        # check_win()
 
 
 def draw_OX(row, col, OX, screen):
@@ -278,8 +275,6 @@ def minimax(TTT, depth, isMax):
 
     return best
 
-# clear the console
-
 
 def clean():
     os_name = platform.system().lower()
@@ -292,7 +287,6 @@ def clean():
 def print_board(TTT):
     line = '---------------'
     print("\n" + line)
-    # print(TTT)
 
     for x, row in enumerate(TTT):
         for y, cell in enumerate(row):
@@ -336,11 +330,6 @@ def user_turn(TTT, screen):
     print_board(TTT)
 
     print_status('x', False, False, screen)
-
-    # for event in pygame.event.get():
-    # if pygame.event.type is MOUSEBUTTONDOWN:
-    #     userClick()
-    # else:
 
     move = -1
     moves = {
@@ -391,9 +380,6 @@ def is_game_over(TTT, screen):
         print("YOU WIN !!")
         draw_win_line(TTT, screen)
         print_status(False, True, 'x', screen)
-        # pygame.event.get()
-        # running = play_again()
-        # reset_game(TTT, screen)
         return True
 
     elif is_winner(TTT) == 'o':
@@ -403,18 +389,12 @@ def is_game_over(TTT, screen):
         print("AI WINS !!")
         draw_win_line(TTT, screen)
         print_status(False, True, 'o', screen)
-        # pygame.event.get()
-        # running = play_again()
-        # reset_game(TTT, screen)
         return True
-    elif len(empty_cells(TTT)) == 0 or is_winner(TTT) :
+    elif len(empty_cells(TTT)) == 0 or is_winner(TTT):
         clean()
         print_board(TTT)
         print("DRAW -_-")
         print_status(False, True, False, screen)
-        # pygame.event.get()
-        # running = play_again()
-        # reset_game(TTT, screen)
         return True
     else:
         return False
@@ -454,7 +434,6 @@ def main():
                     # if event.type == pygame.MOUSEBUTTONDOWN:
                     userClick(TTT, screen)
                     # user_turn(TTT, screen)
-                    # blank_cells = empty_cells(TTT)
                     game_over = is_game_over(TTT, screen)
 
                     if game_over:
