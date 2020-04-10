@@ -391,15 +391,6 @@ def choose_algo():
         try:
             choice = int(input())
             return choice
-            # if choice == 1:
-            #     return 1
-            # elif choice == 2:
-            #     return 2
-            # elif choice == 3:
-            #     return 3
-            # elif choice == 3:
-            #     return 4
-            # else:
         except(KeyError, ValueError):
             print("Bad Input")
 
