@@ -255,7 +255,7 @@ def ai_turn(TTT, screen, ai_algo):
 
     set_move(x, y, 'o', screen)
     print_board(TTT)
-    time.sleep(1)
+    # time.sleep(1)
     print_status('x', False, False, screen)
 
 

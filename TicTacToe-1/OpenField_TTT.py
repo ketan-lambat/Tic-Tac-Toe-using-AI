@@ -6,6 +6,7 @@ import sys
 from math import inf
 from os import system
 from pygame.locals import *
+from AI_algo import *
 
 # global variables
 WIDTH = 600
@@ -433,8 +434,7 @@ def reset_game(TTT, screen):
     TTT = [[None]*3, [None]*3, [None]*3]
 
 
-# def ai_turn(TTT, screen, ai_algo):
-def ai_turn(TTT, screen):
+def ai_turn(TTT, screen, ai_algo):
     depth = len(empty_cells(TTT))
     if depth == 0 or is_winner(TTT):
         return
@@ -444,22 +444,20 @@ def ai_turn(TTT, screen):
 
     print_status('o', False, False, screen)
 
-    # if depth == 9:
-    #     x = choice([0, 1, 2])
-    #     y = choice([0, 1, 2])
-    # else:
-    #     if ai_algo == 1:
-    # move = minimax(TTT, True)
-    # move = alpha_beta(TTT, -inf, inf, True)
-    move = depth_alphabeta(TTT, 0, -inf, inf, True)
-    # if ai_algo == 2:
-    #     move = alpha_beta(TTT, -inf, inf, True)
-    # if ai_algo == 3:
-    #     move = minimax_depth_limit(TTT, 0, True)
-    # if ai_algo == 4:
-    #     move = depth_alphabeta(TTT, 0, -inf, inf, True)
-    # if ai_algo == 5:
-    #     move = minimax_exper(TTT, 0, -inf, inf, True)
+    if depth == 9:
+        x = choice([0, 1, 2])
+        y = choice([0, 1, 2])
+    else:
+        if ai_algo == 1:
+            move = minimax(TTT, True)
+        if ai_algo == 2:
+            move = alpha_beta(TTT, -inf, inf, True)
+        if ai_algo == 3:
+            move = minimax_depth_limit(TTT, 0, True)
+        if ai_algo == 4:
+            move = depth_alphabeta(TTT, 0, -inf, inf, True)
+        if ai_algo == 5:
+            move = minimax_exper(TTT, 0, -inf, inf, True)
     x, y = move[0], move[1]
 
     set_move(x, y, 'o', screen)
@@ -582,7 +580,7 @@ def main():
     while running:
         screen = open_window()
         game_start(screen)
-        # ai_algo = choose_algo()
+        ai_algo = choose_algo()
         print_status('x', False, False, screen)
 
         terminal_state = False
@@ -610,7 +608,7 @@ def main():
                         running = False
 
                     if len(empty_cells(TTT)) != 0:
-                        ai_turn(TTT, screen)
+                        ai_turn(TTT, screen, ai_algo)
 
                         game_over = is_game_over(TTT, screen)
 
