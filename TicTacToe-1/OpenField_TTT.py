@@ -149,7 +149,7 @@ def print_status(playerTurn, isOver, winner, screen):
             msg = "Game Tied"
 
     # render(text, antialias, color, background=None) -> Surface
-    font = pygame.font.Font(None, 30)
+    font = pygame.font.SysFont('Comic Sans MS', 30)
     text = font.render(msg, 1, (255, 255, 255))
 
     # rendered msg on the screen
@@ -201,12 +201,12 @@ def is_winner(TTT):
                 return TTT[i][j]
 
     # reverse diagonals
-    for i in range(5, 2, -1):
+    for i in range(0, 3):
         for j in range(5, 2, -1):
             if ((TTT[i][j] is not None) and (TTT[i][j]
-                                             == TTT[i-1][j-1]
-                                             == TTT[i-2][j-2]
-                                             == TTT[i-3][j-3])):
+                                             == TTT[i+1][j-1]
+                                             == TTT[i+2][j-2]
+                                             == TTT[i+3][j-3])):
                 return TTT[i][j]
 
     return None
@@ -407,7 +407,7 @@ def reset_game(TTT, screen):
 
 
 # def ai_turn(TTT, screen, ai_algo):
-def ai_turn(TTT):
+def ai_turn(TTT, screen):
     depth = len(empty_cells(TTT))
     if depth == 0 or is_winner(TTT):
         return
@@ -415,7 +415,7 @@ def ai_turn(TTT):
     clean()
     print("AI TURN")
 
-    # print_status('o', False, False, screen)
+    print_status('o', False, False, screen)
 
     # if depth == 9:
     #     x = choice([0, 1, 2])
@@ -435,11 +435,10 @@ def ai_turn(TTT):
     #     move = minimax_exper(TTT, 0, -inf, inf, True)
     x, y = move[0], move[1]
 
-    # set_move(x, y, 'o', screen)
-    set_move(x, y, 'o')
+    set_move(x, y, 'o', screen)
     print_board(TTT)
-    time.sleep(1)
-    # print_status('x', False, False, screen)
+    # time.sleep(1)
+    print_status('x', False, False, screen)
 
 
 def user_turn(TTT, screen):
@@ -451,7 +450,7 @@ def user_turn(TTT, screen):
     print("USER TURN")
     print_board(TTT)
 
-    # print_status('x', False, False, screen)
+    print_status('x', False, False, screen)
 
     move = -1
     moves = {
@@ -528,7 +527,7 @@ def is_game_over(TTT, screen):
         print_board(TTT)
         print("YOU WIN !!")
         # draw_win_line(TTT, screen)
-        # print_status(False, True, 'x', screen)
+        print_status(False, True, 'x', screen)
         return True
 
     elif is_winner(TTT) == 'o':
@@ -537,13 +536,13 @@ def is_game_over(TTT, screen):
         print_board(TTT)
         print("AI WINS !!")
         # draw_win_line(TTT, screen)
-        # print_status(False, True, 'o', screen)
+        print_status(False, True, 'o', screen)
         return True
     elif len(empty_cells(TTT)) == 0 or is_winner(TTT):
         clean()
         print_board(TTT)
         print("DRAW -_-")
-        # print_status(False, True, False, screen)
+        print_status(False, True, False, screen)
         return True
     else:
         return False
@@ -561,31 +560,20 @@ def main():
 
         terminal_state = False
 
-    while not terminal_state:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                sys.exit(0)
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-
-                # while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
-                    # if first == 'N':
-                    #     ai_turn(c_choice, h_choice)
-                    #     first = ''
-                userClick(TTT, screen)
-                game_over = is_game_over(TTT, screen)
-
-                if game_over:
-                    reset_game(TTT, screen)
-                    pygame.quit()
-                    terminal_state = True
+        while not terminal_state:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     running = False
+                    pygame.quit()
+                    sys.exit(0)
 
-                if len(empty_cells(TTT)) != 0:
-                    ai_turn(TTT, screen)
+                if event.type == pygame.MOUSEBUTTONDOWN:
 
+                    # while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
+                        # if first == 'N':
+                        #     ai_turn(c_choice, h_choice)
+                        #     first = ''
+                    userClick(TTT, screen)
                     game_over = is_game_over(TTT, screen)
 
                     if game_over:
@@ -594,7 +582,18 @@ def main():
                         terminal_state = True
                         running = False
 
-    # exit()
+                    if len(empty_cells(TTT)) != 0:
+                        ai_turn(TTT, screen)
+
+                        game_over = is_game_over(TTT, screen)
+
+                        if game_over:
+                            reset_game(TTT, screen)
+                            pygame.quit()
+                            terminal_state = True
+                            running = False
+
+        # exit()
 
 
 if __name__ == "__main__":

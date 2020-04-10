@@ -128,7 +128,7 @@ def print_status(playerTurn, isOver, winner, screen):
             msg = "Game Tied"
 
     # render(text, antialias, color, background=None) -> Surface
-    font = pygame.font.Font(None, 30)
+    font = pygame.font.SysFont('Comic Sans MS', 30)
     text = font.render(msg, 1, (255, 255, 255))
 
     # rendered msg on the screen
