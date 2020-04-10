@@ -41,13 +41,12 @@ def reset_game(TTT, screen):
     TTT = [[None]*3, [None]*3, [None]*3]
 
 
-def play_again(TTT, screen):
+def play_again():
     while True:
         pygame.display.update()
         sys.stdout.write("Play again? [Y/N] : \n  ")
         answer = input().lower()
         if (answer == "y"):
-            reset_game(TTT, screen)
             return True
         elif (answer == "n"):
             sys.exit(0)
@@ -219,8 +218,8 @@ def is_winner(TTT):
 
     # if len(empty_cells(TTT)) == 0 and (all([all(row) for row in TTT])):
     #     return 'draw'
-
-    return None
+     
+    return False
 
 
 def empty_cells(TTT):
@@ -304,13 +303,14 @@ def print_board(TTT):
         print("\n" + line)
 
 
-def ai_turn(TTT, screen):
+def ai_turn(screen):
     depth = len(empty_cells(TTT))
     if depth == 0 or is_winner(TTT):
         return
 
     clean()
     print("AI TURN")
+    print_board(TTT)
 
     print_status('o', False, False, screen)
 
@@ -322,11 +322,10 @@ def ai_turn(TTT, screen):
         x, y = move[0], move[1]
 
     set_move(x, y, 'o', screen)
-    print_board(TTT)
     time.sleep(1)
 
 
-def user_turn(TTT, screen):
+def user_turn():
     depth = len(empty_cells(TTT))
     if depth == 0 or is_winner(TTT):
         return
@@ -335,7 +334,7 @@ def user_turn(TTT, screen):
     print("USER TURN")
     print_board(TTT)
 
-    print_status('x', False, False, screen)
+    print_status('x', False, False)
 
     # for event in pygame.event.get():
     # if pygame.event.type is MOUSEBUTTONDOWN:
@@ -353,7 +352,7 @@ def user_turn(TTT, screen):
         try:
             move = int(input("Enter ip move position (1...9):"))
             coord = moves[move]
-            move_possib = set_move(coord[0], coord[1], 'x', screen)
+            move_possib = set_move(coord[0], coord[1], 'x')
 
             if not move_possib:
                 print("Incorrect Move")
@@ -393,7 +392,7 @@ def is_game_over(TTT, screen):
         print_status(False, True, 'x', screen)
         # pygame.event.get()
         # running = play_again()
-        # reset_game(TTT, screen)
+        reset_game(TTT, screen)
         return True
 
     elif is_winner(TTT) == 'o':
@@ -405,16 +404,16 @@ def is_game_over(TTT, screen):
         print_status(False, True, 'o', screen)
         # pygame.event.get()
         # running = play_again()
-        # reset_game(TTT, screen)
+        reset_game(TTT, screen)
         return True
-    elif len(empty_cells(TTT)) == 0 or is_winner(TTT) :
+    elif is_winner(TTT) == '0':
         clean()
         print_board(TTT)
         print("DRAW -_-")
         print_status(False, True, False, screen)
         # pygame.event.get()
         # running = play_again()
-        # reset_game(TTT, screen)
+        reset_game(TTT, screen)
         return True
     else:
         return False
@@ -429,6 +428,7 @@ def main():
         screen = open_window()
         game_start(screen)
         print_status('x', False, False, screen)
+
 
         terminal_state = False
 
@@ -452,38 +452,29 @@ def main():
                     # while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
 
                     # if event.type == pygame.MOUSEBUTTONDOWN:
-                    userClick(TTT, screen)
-                    # user_turn(TTT, screen)
+                    userClick(TTT,screen)
                     # blank_cells = empty_cells(TTT)
                     game_over = is_game_over(TTT, screen)
 
                     if game_over:
-                        reset_game(TTT, screen)
-                        pygame.quit()
-                        terminal_state = True
-                        running = False
-                        # pygame.event.get()
-                        # terminal_state = play_again(TTT, screen)
+                        pygame.event.get()
+                        terminal_state = play_again()
 
                     # else:
                     # user_turn()
                     if len(empty_cells(TTT)) != 0:
-                        ai_turn(TTT, screen)
+                        ai_turn(screen)
 
                         game_over = is_game_over(TTT, screen)
 
                         if game_over:
-                            reset_game(TTT, screen)
-                            pygame.quit()
-                            terminal_state = True
-                            running = False
-                            # pygame.event.get()
-                            # terminal_state = play_again(TTT, screen)
+                            pygame.event.get()
+                            terminal_state = play_again()
                     # pygame.event.pump()
 
-                    # pygame.event.pump()
+            #     pygame.event.pump()
             #     CLOCK.tick(FPS)
-    # exit()
+            # exit()
 
 
 if __name__ == '__main__':
