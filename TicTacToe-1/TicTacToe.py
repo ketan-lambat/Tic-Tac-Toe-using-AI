@@ -233,25 +233,24 @@ def evalFunc(WINNER):
 
 
 def minimax(TTT, depth, isMax):
-    print("minimax \t depth", depth, "\t isMax:",  isMax)
-    # global TTT,
-    # global TIE, WINNER
 
-    if isMax == True:
-        best = [-1, -1, -inf]
-    else:
-        best = [-1, -1, +inf]
-
-    if depth == 0 or is_winner(TTT):
-        # score = evalFunc(WINNER)
+        # print("minimax \t depth", depth, "\t isMax:",  isMax)
+        # global TTT,
+        # global TIE, WINNER
+    if is_winner(TTT):
         if is_winner(TTT) == 'x':
             score = -1
         elif is_winner(TTT) == 'o':
             score = 1
         else:
             score = 0
-        print("is_winner() : ", score)
+        # print("is_winner() : ", score)
         return [-1, -1, score]
+
+    if isMax == True:
+        best = [-1, -1, -inf]
+    else:
+        best = [-1, -1, +inf]
 
     for cell in empty_cells(TTT):
         x, y = cell[0], cell[1]
@@ -261,9 +260,8 @@ def minimax(TTT, depth, isMax):
             TTT[x][y] = 'x'
 
         score = minimax(TTT, depth - 1, not isMax)
-        print("score : ", score)
+        # print("score : ", score)
         TTT[x][y] = None
-        # WINNER = None
         score[0], score[1] = x, y
 
         if isMax:
@@ -272,10 +270,54 @@ def minimax(TTT, depth, isMax):
         else:
             if score[2] < best[2]:
                 best = score
-        print("best", best)
+        # print("best", best)
 
-    print("best_op", best)
+    # print("best_op", best)
     return best
+
+    # print("minimax \t depth", depth, "\t isMax:",  isMax)
+    # # global TTT,
+    # # global TIE, WINNER
+
+    # if isMax == True:
+    #     best = [-1, -1, -inf]
+    # else:
+    #     best = [-1, -1, +inf]
+
+    # if depth == 0 or is_winner(TTT):
+    #     # score = evalFunc(WINNER)
+    #     if is_winner(TTT) == 'x':
+    #         score = -1
+    #     elif is_winner(TTT) == 'o':
+    #         score = 1
+    #     else:
+    #         score = 0
+    #     print("is_winner() : ", score)
+    #     return [-1, -1, score]
+
+    # for cell in empty_cells(TTT):
+    #     x, y = cell[0], cell[1]
+    #     if isMax:
+    #         TTT[x][y] = 'o'
+    #     else:
+    #         TTT[x][y] = 'x'
+
+    #     score = minimax(TTT, depth - 1, not isMax)
+    #     print("score : ", score)
+    #     TTT[x][y] = None
+    #     # WINNER = None
+    #     score[0], score[1] = x, y
+
+    #     if isMax:
+    #         if score[2] > best[2]:
+    #             best = score
+    #     else:
+    #         if score[2] < best[2]:
+    #             best = score
+    #     print("best", best)
+
+    # print("best_op", best)
+    # return best
 
     # if score == 1:
     #     return score
