@@ -276,6 +276,42 @@ def minimax(TTT, depth, isMax):
     return best
 
 
+def alpha_beta(TTT, depth, alpha, beta, isMax):
+    if isMax:
+        best = [-1, -1, -inf]
+    else:
+        best = [-1, -1, inf]
+
+    if depth == 0 or is_winner(TTT):
+        score = eval(TTT)
+        return [-1, -1, score]
+
+    for cell in empty_cells(TTT):
+        x, y = cell[0], cell[1]
+        if isMax:
+            TTT[x][y] = 'o'
+        else:
+            TTT[x][y] = 'x'
+        score = alpha_beta(TTT, depth-1, alpha, beta, not isMax)
+        TTT[x][y] = None
+        score[0], score[1] = x, y
+
+        if isMax:
+            if score[2] > best[2]:
+                best = score
+            alpha = max(alpha, best[2])
+            if beta <= alpha:
+                break
+        else:
+            if score[2] < best[2]:
+                best = score
+            beta = min(beta, best[2])
+            if beta <= alpha:
+                break
+
+    return best
+
+
 def clean():
     os_name = platform.system().lower()
     if 'windows' in os_name:
@@ -312,7 +348,8 @@ def ai_turn(TTT, screen):
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
     else:
-        move = minimax(TTT, depth, True)
+        # move = minimax(TTT, depth, True)
+        move = alpha_beta(TTT, depth, -inf, inf, True)
         x, y = move[0], move[1]
 
     set_move(x, y, 'o', screen)
