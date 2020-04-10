@@ -246,13 +246,13 @@ def set_move(x, y, OX, screen):
 
 
 # if AI turn isMax = True
-def minimax(TTT, depth, isMax):
+def minimax(TTT, isMax):
     if isMax:
         best = [-1, -1, -inf]
     else:
         best = [-1, -1, inf]
 
-    if depth == 0 or is_winner(TTT):
+    if len(empty_cells(TTT)) == 0 or is_winner(TTT):
         score = eval(TTT)
         return [-1, -1, score]
 
@@ -262,7 +262,7 @@ def minimax(TTT, depth, isMax):
             TTT[x][y] = 'o'
         else:
             TTT[x][y] = 'x'
-        score = minimax(TTT, depth-1, not isMax)
+        score = minimax(TTT, not isMax)
         TTT[x][y] = None
         score[0], score[1] = x, y
 
@@ -276,13 +276,13 @@ def minimax(TTT, depth, isMax):
     return best
 
 
-def alpha_beta(TTT, depth, alpha, beta, isMax):
+def alpha_beta(TTT, alpha, beta, isMax):
     if isMax:
         best = [-1, -1, -inf]
     else:
         best = [-1, -1, inf]
 
-    if depth == 0 or is_winner(TTT):
+    if len(empty_cells(TTT)) == 0 or is_winner(TTT):
         score = eval(TTT)
         return [-1, -1, score]
 
@@ -292,7 +292,7 @@ def alpha_beta(TTT, depth, alpha, beta, isMax):
             TTT[x][y] = 'o'
         else:
             TTT[x][y] = 'x'
-        score = alpha_beta(TTT, depth-1, alpha, beta, not isMax)
+        score = alpha_beta(TTT, alpha, beta, not isMax)
         TTT[x][y] = None
         score[0], score[1] = x, y
 
@@ -310,6 +310,85 @@ def alpha_beta(TTT, depth, alpha, beta, isMax):
                 break
 
     return best
+
+
+def depth_alphabeta(TTT, depth, alpha, beta, isMax):
+    if isMax:
+        best = [-1, -1, -inf]
+    else:
+        best = [-1, -1, inf]
+
+    if len(empty_cells(TTT)) == 0 or is_winner(TTT):
+        score = eval(TTT)
+        return [-1, -1, score]
+
+    # cutoff at depth of 3 and evaluate TTT state
+    if depth == 3:
+        result = eval_heuristic(TTT)
+        return [-1, -1, result]
+
+    for cell in empty_cells(TTT):
+        x, y = cell[0], cell[1]
+        if isMax:
+            TTT[x][y] = 'o'
+        else:
+            TTT[x][y] = 'x'
+        score = depth_alphabeta(TTT, depth+1, alpha, beta, not isMax)
+        TTT[x][y] = None
+        score[0], score[1] = x, y
+
+        if isMax:
+            if score[2] > best[2]:
+                best = score
+            alpha = max(alpha, best[2])
+            if beta <= alpha:
+                break
+        else:
+            if score[2] < best[2]:
+                best = score
+            beta = min(beta, best[2])
+            if beta <= alpha:
+                break
+
+    return best
+
+
+def eval_heuristic(TTT):
+
+    # no of possible wins in next 2 moves of AI
+    score_AI = 0
+    for cell_i in empty_cells(TTT):
+        x_i, y_i = cell_i[0], cell_i[1]
+        TTT[x_i][y_i] = 'o'
+        for cell_j in empty_cells(TTT):
+            x_j, y_j = cell_j[0], cell_j[1]
+            TTT[x_j][y_j] = 'o'
+            if is_winner(TTT) == 'o':
+                score_AI = score_AI + 1
+            TTT[x_j][y_j] = None
+        TTT[x_i][y_i] = None
+
+    # no of possible wins in next 2 moves of User
+    score_User = 0
+    for cell_i in empty_cells(TTT):
+        x_i, y_i = cell_i[0], cell_i[1]
+        TTT[x_i][y_i] = 'x'
+        for cell_j in empty_cells(TTT):
+            x_j, y_j = cell_j[0], cell_j[1]
+            TTT[x_j][y_j] = 'x'
+            if is_winner(TTT) == 'x':
+                score_User = score_User + 1
+            TTT[x_j][y_j] = None
+        TTT[x_i][y_i] = None
+
+    if score_AI > score_User:
+        score = 10
+    elif score_AI < score_User:
+        score = -10
+    else:
+        score = 0
+
+    return score
 
 
 def clean():
@@ -348,8 +427,9 @@ def ai_turn(TTT, screen):
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
     else:
-        # move = minimax(TTT, depth, True)
-        move = alpha_beta(TTT, depth, -inf, inf, True)
+        # move = minimax(TTT, True)
+        # move = alpha_beta(TTT, -inf, inf, True)
+        move = depth_alphabeta(TTT, 0, -inf, inf, True)
         x, y = move[0], move[1]
 
     set_move(x, y, 'o', screen)
