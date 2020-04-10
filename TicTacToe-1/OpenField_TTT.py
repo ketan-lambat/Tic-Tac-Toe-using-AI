@@ -13,6 +13,7 @@ HEIGHT = 600
 
 # colours
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 LINE_COLOUR = (10, 10, 10)
 BG_COLOR = (33, 47, 60)
 
@@ -108,29 +109,55 @@ def draw_OX(row, col, OX, screen):
     pygame.display.update()
 
 
-# def draw_win_line(TTT, screen):
-#     # winning rows
-#     for row in range(0, 3):
-#         if ((TTT[row][0] == TTT[row][1] == TTT[row][2]) and (TTT[row][0] is not None)):
-#             pygame.draw.line(screen, (250, 0, 0),
-#                              (0, (row+1)*HEIGHT/3-HEIGHT/6),
-#                              (WIDTH, (row+1)*HEIGHT/3-HEIGHT/6), 4)
-#             break
+def draw_win_line(TTT, screen):
+    # winning rows
+    for row in range(0, 6):
+        for j in range(0, 3):
+            if ((TTT[row][j] is not None) and (TTT[row][j]
+                                               == TTT[row][j+1]
+                                               == TTT[row][j+2]
+                                               == TTT[row][j+3])):
+                pygame.draw.line(screen, RED,
+                                 ((j+1)*WIDTH/6-WIDTH/12,
+                                  (row+1)*HEIGHT/6-HEIGHT/12),
+                                 ((j+4)*WIDTH/6-WIDTH/12, (row+1)*HEIGHT/6-HEIGHT/12), 4)
+            break
 
-#     # winning columns
-#     for col in range(0, 3):
-#         if((TTT[0][col] == TTT[1][col] == TTT[2][col])and(TTT[0][col] is not None)):
-#             pygame.draw.line(screen, (250, 0, 0),
-#                              ((col+1)*WIDTH/3-WIDTH/6, 0),
-#                              ((col+1)*WIDTH/3-WIDTH/6), HEIGHT, 4)
-#             break
+    # winning columns
+    for col in range(0, 6):
+        for i in range(0, 3):
+            if((TTT[i][col] is not None) and (TTT[i][col]
+                                              == TTT[i+1][col]
+                                              == TTT[i+2][col]
+                                              == TTT[i+3][col])):
+                pygame.draw.line(screen, RED,
+                                 ((col+1)*WIDTH/6-WIDTH/12,
+                                  (i+1)*HEIGHT/6-HEIGHT/12),
+                                 ((col+1)*WIDTH/6-WIDTH/12, (i+4)*HEIGHT/6-HEIGHT/12), 4)
+            break
 
-#     # diagonal winners
-#     if((TTT[0][0] is not None) and (TTT[0][0] == TTT[1][1] == TTT[2][2])):
-#         pygame.draw.line(screen, (250, 70, 70), (50, 50), (350, 350), 4)
+    # diagonal winners
+    for i in range(0, 3):
+        for j in range(0, 3):
+            if((TTT[i][j] is not None) and (TTT[i][j]
+                                            == TTT[i+1][j+1]
+                                            == TTT[i+2][j+2]
+                                            == TTT[i+3][j+3])):
+                pygame.draw.line(screen, RED,
+                                 ((j+1)*WIDTH/6-WIDTH/12,
+                                  (i+1)*HEIGHT/6-HEIGHT/12),
+                                 ((j+4)*WIDTH/6-WIDTH/12, (i+4)*HEIGHT/6-HEIGHT/12), 4)
 
-#     if((TTT[0][2] is not None) and (TTT[0][2] == TTT[1][1] == TTT[2][0])):
-#         pygame.draw.line(screen, (250, 70, 70), (350, 50), (50, 350), 4)
+    for i in range(0, 3):
+        for j in range(5, 2, -1):
+            if ((TTT[i][j] is not None) and (TTT[i][j]
+                                             == TTT[i+1][j-1]
+                                             == TTT[i+2][j-2]
+                                             == TTT[i+3][j-3])):
+                pygame.draw.line(screen, RED,
+                                 ((j+1)*WIDTH/6-WIDTH/12,
+                                  (i+1)*HEIGHT/6-HEIGHT/12),
+                                 ((j-2)*WIDTH/6-WIDTH/12, (i+4)*HEIGHT/6-HEIGHT/12), 4)
 
 
 def print_status(playerTurn, isOver, winner, screen):
@@ -149,8 +176,8 @@ def print_status(playerTurn, isOver, winner, screen):
             msg = "Game Tied"
 
     # render(text, antialias, color, background=None) -> Surface
-    font = pygame.font.SysFont('Comic Sans MS', 30)
-    text = font.render(msg, 1, (255, 255, 255))
+    font = pygame.font.SysFont("Comic Sans MS", 30)
+    text = font.render(msg, True, (255, 255, 255))
 
     # rendered msg on the screen
     # fill (colour, position(x, y),size(len, wid) )
@@ -526,7 +553,7 @@ def is_game_over(TTT, screen):
         print("USER TURN")
         print_board(TTT)
         print("YOU WIN !!")
-        # draw_win_line(TTT, screen)
+        draw_win_line(TTT, screen)
         print_status(False, True, 'x', screen)
         return True
 
@@ -535,7 +562,7 @@ def is_game_over(TTT, screen):
         print("AI TURN")
         print_board(TTT)
         print("AI WINS !!")
-        # draw_win_line(TTT, screen)
+        draw_win_line(TTT, screen)
         print_status(False, True, 'o', screen)
         return True
     elif len(empty_cells(TTT)) == 0 or is_winner(TTT):
@@ -592,8 +619,8 @@ def main():
                             pygame.quit()
                             terminal_state = True
                             running = False
-
-        # exit()
+    pygame.quit()
+    # exit()
 
 
 if __name__ == "__main__":

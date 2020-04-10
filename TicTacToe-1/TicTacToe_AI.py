@@ -14,6 +14,7 @@ HEIGHT = 400
 
 # colours
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 LINE_COLOUR = (10, 10, 10)
 BG_COLOR = (80, 80, 80)
 
@@ -91,7 +92,7 @@ def draw_win_line(TTT, screen):
     # winning rows
     for row in range(0, 3):
         if ((TTT[row][0] == TTT[row][1] == TTT[row][2]) and (TTT[row][0] is not None)):
-            pygame.draw.line(screen, (250, 0, 0),
+            pygame.draw.line(screen, RED,
                              (0, (row+1)*HEIGHT/3-HEIGHT/6),
                              (WIDTH, (row+1)*HEIGHT/3-HEIGHT/6), 4)
             break
@@ -99,17 +100,17 @@ def draw_win_line(TTT, screen):
     # winning columns
     for col in range(0, 3):
         if((TTT[0][col] == TTT[1][col] == TTT[2][col])and(TTT[0][col] is not None)):
-            pygame.draw.line(screen, (250, 0, 0),
+            pygame.draw.line(screen, RED,
                              ((col+1)*WIDTH/3-WIDTH/6, 0),
                              ((col+1)*WIDTH/3-WIDTH/6), HEIGHT, 4)
             break
 
     # diagonal winners
     if((TTT[0][0] is not None) and (TTT[0][0] == TTT[1][1] == TTT[2][2])):
-        pygame.draw.line(screen, (250, 70, 70), (50, 50), (350, 350), 4)
+        pygame.draw.line(screen, RED, (50, 50), (350, 350), 4)
 
     if((TTT[0][2] is not None) and (TTT[0][2] == TTT[1][1] == TTT[2][0])):
-        pygame.draw.line(screen, (250, 70, 70), (350, 50), (50, 350), 4)
+        pygame.draw.line(screen, RED, (350, 50), (50, 350), 4)
 
 
 def print_status(playerTurn, isOver, winner, screen):
