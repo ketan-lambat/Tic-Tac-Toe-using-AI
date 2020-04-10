@@ -246,8 +246,6 @@ def set_move(x, y, OX, screen):
         return False
 
 
-
-
 def clean():
     os_name = platform.system().lower()
     if 'windows' in os_name:
@@ -270,7 +268,7 @@ def print_board(TTT):
         print("\n" + line)
 
 
-def ai_turn(TTT, screen):
+def ai_turn(TTT, screen, ai_algo):
     depth = len(empty_cells(TTT))
     if depth == 0 or is_winner(TTT):
         return
@@ -284,11 +282,16 @@ def ai_turn(TTT, screen):
         x = choice([0, 1, 2])
         y = choice([0, 1, 2])
     else:
-        # move = minimax(TTT, True)
-        # move = alpha_beta(TTT, -inf, inf, True)
-        # move = minimax_depth_limit(TTT, 0, True)
-        # move = depth_alphabeta(TTT, 0, -inf, inf, True)
-        move = minimax_exper(TTT, 0, -inf, inf, True)
+        if ai_algo == 1:
+            move = minimax(TTT, True)
+        if ai_algo == 2:
+            move = alpha_beta(TTT, -inf, inf, True)
+        if ai_algo == 3:
+            move = minimax_depth_limit(TTT, 0, True)
+        if ai_algo == 4:
+            move = depth_alphabeta(TTT, 0, -inf, inf, True)
+        if ai_algo == 5:
+            move = minimax_exper(TTT, 0, -inf, inf, True)
         x, y = move[0], move[1]
 
     set_move(x, y, 'o', screen)
@@ -377,6 +380,29 @@ def is_game_over(TTT, screen):
         return False
 
 
+def choose_algo():
+    while True:
+        print("Choose AI Algo. [1/2/3/4]")
+        print("1: minimax")
+        print("2: minimax-AlphaBeta")
+        print("3: depth limited Minimax")
+        print("4: depth limited AlphaBeta Minimax")
+        print("5: Experimental Minimax")
+        try:
+            choice = int(input())
+            return choice
+            # if choice == 1:
+            #     return 1
+            # elif choice == 2:
+            #     return 2
+            # elif choice == 3:
+            #     return 3
+            # elif choice == 3:
+            #     return 4
+            # else:
+        except(KeyError, ValueError):
+            print("Bad Input")
+
 def main():
     clean()
 
@@ -385,6 +411,7 @@ def main():
     while running:
         screen = open_window()
         game_start(screen)
+        ai_algo = choose_algo()
         print_status('x', False, False, screen)
 
         terminal_state = False
@@ -424,7 +451,7 @@ def main():
                     # else:
                     # user_turn()
                     if len(empty_cells(TTT)) != 0:
-                        ai_turn(TTT, screen)
+                        ai_turn(TTT, screen, ai_algo)
 
                         game_over = is_game_over(TTT, screen)
 

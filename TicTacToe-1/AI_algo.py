@@ -1,4 +1,4 @@
-from ttt import *
+from TicTacToe_AI import *
 # if AI turn isMax = True
 def minimax(TTT, isMax):
     if isMax:
