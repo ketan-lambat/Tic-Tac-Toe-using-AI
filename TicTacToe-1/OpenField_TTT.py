@@ -5,8 +5,173 @@ import platform
 import sys
 from math import inf
 from os import system
+from pygame.locals import *
+
+# global variables
+WIDTH = 600
+HEIGHT = 600
+
+# colours
+WHITE = (255, 255, 255)
+LINE_COLOUR = (10, 10, 10)
+BG_COLOR = (33, 47, 60)
 
 TTT = [[None]*6, [None]*6, [None]*6, [None]*6, [None]*6, [None]*6]
+
+# initialize pygame window
+pygame.init()
+FPS = 30
+CLOCK = pygame.time.Clock()
+
+
+# load the images/sprites
+x_img = pygame.image.load("X.png")
+o_img = pygame.image.load("O.png")
+
+# resize to proper scale
+x_img = pygame.transform.scale(x_img, (50, 50))
+o_img = pygame.transform.scale(o_img, (50, 50))
+
+
+def open_window():
+    screen = pygame.display.set_mode((WIDTH, HEIGHT+100))
+    pygame.display.set_caption("Open Field Tic Tac Toe with AI")
+    return screen
+
+
+def game_start(screen):
+
+    screen.fill(BG_COLOR)
+
+    # line(surface, color, start_pos, end_pos, width)
+
+    # vertical lines
+    pygame.draw.line(screen, LINE_COLOUR, (WIDTH/6, 0),
+                     (WIDTH/6, HEIGHT), 7)
+    pygame.draw.line(screen, LINE_COLOUR, (WIDTH/6*2, 0),
+                     (WIDTH/6*2, HEIGHT), 7)
+    pygame.draw.line(screen, LINE_COLOUR, (WIDTH/6*3, 0),
+                     (WIDTH/6*3, HEIGHT), 7)
+    pygame.draw.line(screen, LINE_COLOUR, (WIDTH/6*4, 0),
+                     (WIDTH/6*4, HEIGHT), 7)
+    pygame.draw.line(screen, LINE_COLOUR, (WIDTH/6*5, 0),
+                     (WIDTH/6*5, HEIGHT), 7)
+
+    # horizontal lines
+    pygame.draw.line(screen, LINE_COLOUR, (0, HEIGHT/6),
+                     (WIDTH, HEIGHT/6), 7)
+    pygame.draw.line(screen, LINE_COLOUR, (0, HEIGHT/6*2),
+                     (WIDTH, HEIGHT/6*2), 7)
+    pygame.draw.line(screen, LINE_COLOUR, (0, HEIGHT/6*3),
+                     (WIDTH, HEIGHT/6*3), 7)
+    pygame.draw.line(screen, LINE_COLOUR, (0, HEIGHT/6*4),
+                     (WIDTH, HEIGHT/6*4), 7)
+    pygame.draw.line(screen, LINE_COLOUR, (0, HEIGHT/6*5),
+                     (WIDTH, HEIGHT/6*5), 7)
+
+    pygame.display.update()
+    # print_status()
+
+
+def draw_OX(row, col, OX, screen):
+    if row == 1:
+        posX = 30
+    if row == 2:
+        posX = WIDTH/6 + 30
+    if row == 3:
+        posX = WIDTH/6*2 + 30
+    if row == 4:
+        posX = WIDTH/6*3 + 30
+    if row == 5:
+        posX = WIDTH/6*4 + 30
+    if row == 6:
+        posX = WIDTH/6*5 + 30
+
+    if col == 1:
+        posY = 30
+    if col == 2:
+        posY = HEIGHT/6 + 30
+    if col == 3:
+        posY = HEIGHT/6*2 + 30
+    if col == 4:
+        posY = HEIGHT/6*3 + 30
+    if col == 5:
+        posY = HEIGHT/6*4 + 30
+    if col == 6:
+        posY = HEIGHT/6*5 + 30
+
+    if(OX == 'x'):
+        screen.blit(x_img, (posY, posX))
+    else:
+        screen.blit(o_img, (posY, posX))
+
+    pygame.display.update()
+
+
+# def draw_win_line(TTT, screen):
+#     # winning rows
+#     for row in range(0, 3):
+#         if ((TTT[row][0] == TTT[row][1] == TTT[row][2]) and (TTT[row][0] is not None)):
+#             pygame.draw.line(screen, (250, 0, 0),
+#                              (0, (row+1)*HEIGHT/3-HEIGHT/6),
+#                              (WIDTH, (row+1)*HEIGHT/3-HEIGHT/6), 4)
+#             break
+
+#     # winning columns
+#     for col in range(0, 3):
+#         if((TTT[0][col] == TTT[1][col] == TTT[2][col])and(TTT[0][col] is not None)):
+#             pygame.draw.line(screen, (250, 0, 0),
+#                              ((col+1)*WIDTH/3-WIDTH/6, 0),
+#                              ((col+1)*WIDTH/3-WIDTH/6), HEIGHT, 4)
+#             break
+
+#     # diagonal winners
+#     if((TTT[0][0] is not None) and (TTT[0][0] == TTT[1][1] == TTT[2][2])):
+#         pygame.draw.line(screen, (250, 70, 70), (50, 50), (350, 350), 4)
+
+#     if((TTT[0][2] is not None) and (TTT[0][2] == TTT[1][1] == TTT[2][0])):
+#         pygame.draw.line(screen, (250, 70, 70), (350, 50), (50, 350), 4)
+
+
+def print_status(playerTurn, isOver, winner, screen):
+
+    if not isOver:
+        if playerTurn == 'x':
+            msg = " User(X)'s Turn"
+        elif playerTurn == 'o':
+            msg = " AI(O)'s Turn"
+    elif isOver:
+        if winner == 'x':
+            msg = "YOU WIN !!"
+        elif winner == 'o':
+            msg = "AI WINs !! You Lose"
+        else:
+            msg = "Game Tied"
+
+    # render(text, antialias, color, background=None) -> Surface
+    font = pygame.font.Font(None, 30)
+    text = font.render(msg, 1, (255, 255, 255))
+
+    # rendered msg on the screen
+    # fill (colour, position(x, y),size(len, wid) )
+    screen.fill((0, 0, 0,), (0, 600, 600, 100))
+    text_rect = text.get_rect(center=(WIDTH/2, 700-50))
+    screen.blit(text, text_rect)
+    pygame.display.update()
+
+
+def print_board(TTT):
+    line = '------------------------------'
+    print("\n" + line)
+
+    for x, row in enumerate(TTT):
+        for y, cell in enumerate(row):
+            if cell is None:
+                symb = '_'
+            else:
+                symb = TTT[x][y]
+            print(f'| {symb} |', end='')
+        print("\n" + line)
 
 
 def is_winner(TTT):
@@ -73,11 +238,10 @@ def valid_move(x, y):
         return False
 
 
-# def set_move(x, y, OX, screen):
-def set_move(x, y, OX):
+def set_move(x, y, OX, screen):
     if valid_move(x, y):
         TTT[x][y] = OX
-        # draw_OX(x+1, y+1, OX, screen)
+        draw_OX(x+1, y+1, OX, screen)
         return True
     else:
         return False
@@ -236,18 +400,10 @@ def clean():
         system('clear')
 
 
-def print_board(TTT):
-    line = '------------------------------'
-    print("\n" + line)
-
-    for x, row in enumerate(TTT):
-        for y, cell in enumerate(row):
-            if cell is None:
-                symb = '_'
-            else:
-                symb = TTT[x][y]
-            print(f'| {symb} |', end='')
-        print("\n" + line)
+def reset_game(TTT, screen):
+    time.sleep(2)
+    game_start(screen)
+    TTT = [[None]*3, [None]*3, [None]*3]
 
 
 # def ai_turn(TTT, screen, ai_algo):
@@ -286,8 +442,7 @@ def ai_turn(TTT):
     # print_status('x', False, False, screen)
 
 
-# def user_turn(TTT, screen):
-def user_turn(TTT):
+def user_turn(TTT, screen):
     depth = len(empty_cells(TTT))
     if depth == 0 or is_winner(TTT):
         return
@@ -325,8 +480,47 @@ def user_turn(TTT):
             print('Bad Input')
 
 
-# def is_game_over(TTT, screen):
-def is_game_over(TTT):
+def userClick(TTT, screen):
+    # print_status('x', False, False, screen)
+    x, y = pygame.mouse.get_pos()
+
+    # col clicked
+    if(x < WIDTH/6):
+        col = 1
+    elif(x < WIDTH/6*2):
+        col = 2
+    elif(x < WIDTH/6*3):
+        col = 3
+    elif(x < WIDTH/6*4):
+        col = 4
+    elif(x < WIDTH/6*5):
+        col = 5
+    elif(x < WIDTH):
+        col = 6
+    else:
+        col = None
+
+    # row clicked
+    if(y < HEIGHT/6):
+        row = 1
+    elif(y < HEIGHT/6*2):
+        row = 2
+    elif(y < HEIGHT/6*3):
+        row = 3
+    elif(y < HEIGHT/6*4):
+        row = 4
+    elif(y < HEIGHT/6*5):
+        row = 5
+    elif(y < HEIGHT):
+        row = 6
+    else:
+        row = None
+
+    if(row and col and TTT[row-1][col-1] is None):
+        set_move(row-1, col-1, 'x', screen)
+
+
+def is_game_over(TTT, screen):
     # game over conditions
     if is_winner(TTT) == 'x':
         clean()
@@ -358,15 +552,49 @@ def is_game_over(TTT):
 def main():
     clean()
 
-    while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
-        # if first == 'N':
-        #     ai_turn(c_choice, h_choice)
-        #     first = ''
+    running = True
+    while running:
+        screen = open_window()
+        game_start(screen)
+        # ai_algo = choose_algo()
+        print_status('x', False, False, screen)
 
-        user_turn(TTT)
-        ai_turn(TTT)
-    is_game_over(TTT)
-    exit()
+        terminal_state = False
+
+    while not terminal_state:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                sys.exit(0)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                # while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
+                    # if first == 'N':
+                    #     ai_turn(c_choice, h_choice)
+                    #     first = ''
+                userClick(TTT, screen)
+                game_over = is_game_over(TTT, screen)
+
+                if game_over:
+                    reset_game(TTT, screen)
+                    pygame.quit()
+                    terminal_state = True
+                    running = False
+
+                if len(empty_cells(TTT)) != 0:
+                    ai_turn(TTT, screen)
+
+                    game_over = is_game_over(TTT, screen)
+
+                    if game_over:
+                        reset_game(TTT, screen)
+                        pygame.quit()
+                        terminal_state = True
+                        running = False
+
+    # exit()
 
 
 if __name__ == "__main__":

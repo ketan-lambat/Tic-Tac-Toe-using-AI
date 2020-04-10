@@ -36,26 +36,6 @@ x_img = pygame.transform.scale(x_img, (80, 80))
 o_img = pygame.transform.scale(o_img, (80, 80))
 
 
-def reset_game(TTT, screen):
-    time.sleep(2)
-    game_start(screen)
-    TTT = [[None]*3, [None]*3, [None]*3]
-
-
-def play_again(TTT, screen):
-    while True:
-        pygame.display.update()
-        sys.stdout.write("Play again? [Y/N] : \n  ")
-        answer = input().lower()
-        if (answer == "y"):
-            reset_game(TTT, screen)
-            return True
-        elif (answer == "n"):
-            sys.exit(0)
-        else:
-            print("Please respond with 'Y' or 'N'.\n")
-
-
 def open_window():
     screen = pygame.display.set_mode((WIDTH, HEIGHT+100))
     pygame.display.set_caption("Tic Tac Toe with AI")
@@ -82,60 +62,6 @@ def game_start(screen):
 
     pygame.display.update()
     # print_status()
-
-
-def print_status(playerTurn, isOver, winner, screen):
-
-    if not isOver:
-        if playerTurn == 'x':
-            msg = " User(X)'s Turn"
-        elif playerTurn == 'o':
-            msg = " AI(O)'s Turn"
-    elif isOver:
-        if winner == 'x':
-            msg = "YOU WIN !!"
-        elif winner == 'o':
-            msg = "AI WINs !! You Lose"
-        else:
-            msg = "Game Tied"
-
-    # render(text, antialias, color, background=None) -> Surface
-    font = pygame.font.Font(None, 30)
-    text = font.render(msg, 1, (255, 255, 255))
-
-    # rendered msg on the screen
-    screen.fill((0, 0, 0,), (0, 400, 500, 100))
-    text_rect = text.get_rect(center=(WIDTH/2, 500-50))
-    screen.blit(text, text_rect)
-    pygame.display.update()
-
-
-def userClick(TTT, screen):
-    # print_status('x', False, False, screen)
-    x, y = pygame.mouse.get_pos()
-
-    # col clicked
-    if(x < WIDTH/3):
-        col = 1
-    elif(x < WIDTH/3*2):
-        col = 2
-    elif(x < WIDTH):
-        col = 3
-    else:
-        col = None
-
-    # row clicked
-    if(y < HEIGHT/3):
-        row = 1
-    elif(y < HEIGHT/3*2):
-        row = 2
-    elif(y < HEIGHT):
-        row = 3
-    else:
-        row = None
-
-    if(row and col and TTT[row-1][col-1] is None):
-        set_move(row-1, col-1, 'x', screen)
 
 
 def draw_OX(row, col, OX, screen):
@@ -186,14 +112,44 @@ def draw_win_line(TTT, screen):
         pygame.draw.line(screen, (250, 70, 70), (350, 50), (50, 350), 4)
 
 
-def eval(TTT):
-    if is_winner(TTT) == 'x':
-        score = -1
-    elif is_winner(TTT) == 'o':
-        score = 1
-    else:
-        score = 0
-    return score
+def print_status(playerTurn, isOver, winner, screen):
+
+    if not isOver:
+        if playerTurn == 'x':
+            msg = " User(X)'s Turn"
+        elif playerTurn == 'o':
+            msg = " AI(O)'s Turn"
+    elif isOver:
+        if winner == 'x':
+            msg = "YOU WIN !!"
+        elif winner == 'o':
+            msg = "AI WINs !! You Lose"
+        else:
+            msg = "Game Tied"
+
+    # render(text, antialias, color, background=None) -> Surface
+    font = pygame.font.Font(None, 30)
+    text = font.render(msg, 1, (255, 255, 255))
+
+    # rendered msg on the screen
+    screen.fill((0, 0, 0,), (0, 400, 500, 100))
+    text_rect = text.get_rect(center=(WIDTH/2, 500-50))
+    screen.blit(text, text_rect)
+    pygame.display.update()
+
+
+def print_board(TTT):
+    line = '---------------'
+    print("\n" + line)
+
+    for x, row in enumerate(TTT):
+        for y, cell in enumerate(row):
+            if cell is None:
+                symb = '_'
+            else:
+                symb = TTT[x][y]
+            print(f'| {symb} |', end='')
+        print("\n" + line)
 
 
 def is_winner(TTT):
@@ -219,6 +175,16 @@ def is_winner(TTT):
     #     return 'draw'
 
     return None
+
+
+def eval(TTT):
+    if is_winner(TTT) == 'x':
+        score = -1
+    elif is_winner(TTT) == 'o':
+        score = 1
+    else:
+        score = 0
+    return score
 
 
 def empty_cells(TTT):
@@ -254,18 +220,10 @@ def clean():
         system('clear')
 
 
-def print_board(TTT):
-    line = '---------------'
-    print("\n" + line)
-
-    for x, row in enumerate(TTT):
-        for y, cell in enumerate(row):
-            if cell is None:
-                symb = '_'
-            else:
-                symb = TTT[x][y]
-            print(f'| {symb} |', end='')
-        print("\n" + line)
+def reset_game(TTT, screen):
+    time.sleep(2)
+    game_start(screen)
+    TTT = [[None]*3, [None]*3, [None]*3]
 
 
 def ai_turn(TTT, screen, ai_algo):
@@ -334,21 +292,32 @@ def user_turn(TTT, screen):
             print('Bad Input')
 
 
-def get_first_player():
-    first_move = ''
-    while first_move != 'y' and first_move != 'n':
-        try:
-            first_move = input(
-                'Want to start first?[Y/N]: ').lower()
-        except (EOFError, KeyboardInterrupt):
-            print('Bye')
-            exit()
-        except (KeyError, ValueError):
-            print('Bad Input')
-    if first_move == 'y':
-        return 'x'
+def userClick(TTT, screen):
+    # print_status('x', False, False, screen)
+    x, y = pygame.mouse.get_pos()
+
+    # col clicked
+    if(x < WIDTH/3):
+        col = 1
+    elif(x < WIDTH/3*2):
+        col = 2
+    elif(x < WIDTH):
+        col = 3
     else:
-        return 'o'
+        col = None
+
+    # row clicked
+    if(y < HEIGHT/3):
+        row = 1
+    elif(y < HEIGHT/3*2):
+        row = 2
+    elif(y < HEIGHT):
+        row = 3
+    else:
+        row = None
+
+    if(row and col and TTT[row-1][col-1] is None):
+        set_move(row-1, col-1, 'x', screen)
 
 
 def is_game_over(TTT, screen):
@@ -380,6 +349,37 @@ def is_game_over(TTT, screen):
         return False
 
 
+def play_again(TTT, screen):
+    while True:
+        pygame.display.update()
+        sys.stdout.write("Play again? [Y/N] : \n  ")
+        answer = input().lower()
+        if (answer == "y"):
+            reset_game(TTT, screen)
+            return True
+        elif (answer == "n"):
+            sys.exit(0)
+        else:
+            print("Please respond with 'Y' or 'N'.\n")
+
+
+def get_first_player():
+    first_move = ''
+    while first_move != 'y' and first_move != 'n':
+        try:
+            first_move = input(
+                'Want to start first?[Y/N]: ').lower()
+        except (EOFError, KeyboardInterrupt):
+            print('Bye')
+            exit()
+        except (KeyError, ValueError):
+            print('Bad Input')
+    if first_move == 'y':
+        return 'x'
+    else:
+        return 'o'
+
+
 def choose_algo():
     while True:
         print("Choose AI Algo. [1/2/3/4]")
@@ -393,6 +393,7 @@ def choose_algo():
             return choice
         except(KeyError, ValueError):
             print("Bad Input")
+
 
 def main():
     clean()
