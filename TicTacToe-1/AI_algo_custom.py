@@ -87,7 +87,7 @@ def minimax_depth_limit(TTT, depth, isMax):
         return [-1, -1, score]
 
     # cutoff at depth of 3 and evaluate TTT state
-    if depth == 3:
+    if depth == 1:
         result = eval_heuristic(TTT)
         return [-1, -1, result]
 
@@ -122,7 +122,7 @@ def depth_alphabeta(TTT, depth, alpha, beta, isMax):
         return [-1, -1, score]
 
     # cutoff at depth of 3 and evaluate TTT state
-    if depth == 3:
+    if depth == 2:
         result = eval_heuristic(TTT)
         return [-1, -1, result]
 
@@ -163,7 +163,7 @@ def minimax_exper(TTT, depth, alpha, beta, isMax):
         return [-1, -1, score]
 
     # cutoff at depth of 3 and evaluate TTT state
-    if depth == 8:
+    if depth == 1:
         result = eval_heuristic(TTT)
         return [-1, -1, result]
 
@@ -229,6 +229,34 @@ def eval_heuristic(TTT):
         score = 0
 
     return score
+
+
+def grid_size_4():
+    return 4
+
+
+def grid_size_5():
+    return 5
+
+
+def grid_size_6():
+    return 6
+
+
+def grid_size_7():
+    return 7
+
+
+def grid_size_8():
+    return 8
+
+
+def grid_size_9():
+    return 9
+
+
+def grid_size_10():
+    return 10
 
 
 def get_algo_1():

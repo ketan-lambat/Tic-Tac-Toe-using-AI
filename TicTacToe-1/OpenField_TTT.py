@@ -7,28 +7,38 @@ import sys
 from math import inf
 from os import system
 from pygame.locals import *
-from AI_algo import *
+from AI_algo_custom import *
 
 # global variables
-WIDTH = 100
-HEIGHT = 100
+
+WIDTH = 400
+HEIGHT = 400
+
 # size of the tic tac toe grid (default 3x3)
 SIZE = 3
 TTT = [[None]*3, [None]*3, [None]*3]
 
 # colours
 WHITE = (255, 255, 255)
-RED = (255, 0, 0)
+BLACK = (0, 0, 0)
+RED = pygame.Color('indianred1')
+# RED = (255, 0, 0)
 LINE_COLOUR = (10, 10, 10)
+TEXT_COLOR = pygame.Color('ivory')
 # BG_COLOR = (33, 47, 60)
 BG_COLOR = (163, 0, 204)
+BG_COLOR_2 = pygame.Color('darkslategrey')
+BG_COLOR_3 = pygame.Color('slateblue4')
+NORMAL_COLOR = pygame.Color('tan2')
+HOVER_COLOR = pygame.Color('tan3')
+ACTIVE_COLOR = pygame.Color('forestgreen')
 
+FONT = pygame.font.SysFont('Comic Sans MS', 18)
 
 # initialize pygame window
 pygame.init()
 FPS = 30
 CLOCK = pygame.time.Clock()
-
 
 # load the images/sprites
 x_img = pygame.image.load("X.png")
@@ -36,15 +46,70 @@ o_img = pygame.image.load("O.png")
 
 # resize to proper scale
 x_img = pygame.transform.scale(
-    x_img, (floor(WIDTH/(SIZE)), floor(WIDTH/(SIZE))))
+    x_img, (40, 40))
 o_img = pygame.transform.scale(
-    o_img, (floor(WIDTH/(SIZE)), floor(WIDTH/(SIZE))))
+    o_img, (40, 40))
 
 
 def open_window():
     screen = pygame.display.set_mode((WIDTH, HEIGHT+100))
     pygame.display.set_caption("Open Field Tic Tac Toe with AI")
     return screen
+
+
+def draw_button(button, screen):
+    """Draw the button rect and the text surface."""
+    pygame.draw.rect(screen, button['color'], button['rect'])
+    screen.blit(button['text'], button['text rect'])
+
+
+def create_button(x, y, w, h, text, callback):
+    """A button is a dictionary that contains the relevant data.
+
+    Consists of a rect, text surface and text rect, color and a
+    callback function.
+    """
+    # The button is a dictionary consisting of the rect, text,
+    # text rect, color and the callback function.
+    text_surf = FONT.render(text, True, BLACK)
+    button_rect = pygame.Rect(x, y, w, h)
+    text_rect = text_surf.get_rect(center=button_rect.center)
+    button = {
+        'rect': button_rect,
+        'text': text_surf,
+        'text rect': text_rect,
+        'color': NORMAL_COLOR,
+        'callback': callback,
+    }
+    return button
+
+
+def create_title_rect(x, y, w, h, text):
+
+    text_surf = FONT.render(text, True, TEXT_COLOR)
+    button_rect = pygame.Rect(x, y, w, h)
+    text_rect = text_surf.get_rect(center=button_rect.center)
+    button = {
+        'rect': button_rect,
+        'text': text_surf,
+        'text rect': text_rect,
+        'color': BG_COLOR_3,
+    }
+    return button
+
+
+def create_text_rect(x, y, w, h, text):
+
+    text_surf = FONT.render(text, True, WHITE)
+    button_rect = pygame.Rect(x, y, w, h)
+    text_rect = text_surf.get_rect(center=button_rect.center)
+    button = {
+        'rect': button_rect,
+        'text': text_surf,
+        'text rect': text_rect,
+        'color': BG_COLOR,
+    }
+    return button
 
 
 def game_start(screen):
@@ -67,6 +132,7 @@ def game_start(screen):
 
 
 def draw_OX(row, col, OX, screen):
+
     for i in range(1, SIZE+1):
         if row == i:
             posX = 20 + WIDTH/SIZE * (i-1)
@@ -74,7 +140,6 @@ def draw_OX(row, col, OX, screen):
     for i in range(1, SIZE+1):
         if col == i:
             posY = 20 + HEIGHT/SIZE * (i-1)
-
     if(OX == 'x'):
         screen.blit(x_img, (posY, posX))
     else:
@@ -95,7 +160,6 @@ def draw_win_line(TTT, screen):
                                  ((j+1)*WIDTH/SIZE-WIDTH/(SIZE*2),
                                   (row+1)*HEIGHT/SIZE-HEIGHT/(SIZE*2)),
                                  ((j+4)*WIDTH/SIZE-WIDTH/(SIZE*2), (row+1)*HEIGHT/SIZE-HEIGHT/(SIZE*2)), 4)
-            break
 
     # winning columns
     for col in range(0, SIZE):
@@ -108,7 +172,6 @@ def draw_win_line(TTT, screen):
                                  ((col+1)*WIDTH/SIZE-WIDTH/(SIZE*2),
                                   (i+1)*HEIGHT/SIZE-HEIGHT/(SIZE*2)),
                                  ((col+1)*WIDTH/SIZE-WIDTH/(SIZE*2), (i+4)*HEIGHT/SIZE-HEIGHT/(SIZE*2)), 4)
-            break
 
     # diagonal winners
     for i in range(0, SIZE-3):
@@ -154,7 +217,7 @@ def print_status(playerTurn, isOver, winner, screen):
     text = font.render(msg, True, (255, 255, 255))
 
     # rendered msg on the screen
-    # fill (colour, position(x, y),size(len, wid) )
+    # fill (colour, position(x, y),size(wid, ht) )
     screen.fill((0, 0, 0,), (0, HEIGHT, WIDTH, 100))
     text_rect = text.get_rect(center=(WIDTH/2, HEIGHT+50))
     screen.blit(text, text_rect)
@@ -248,151 +311,6 @@ def set_move(x, y, OX, screen):
         return False
 
 
-def minimax(TTT, isMax):
-    if isMax:
-        best = [-1, -1, -inf]
-    else:
-        best = [-1, -1, inf]
-
-    if len(empty_cells(TTT)) == 0 or is_winner(TTT):
-        score = eval(TTT)
-        return [-1, -1, score]
-
-    for cell in empty_cells(TTT):
-        x, y = cell[0], cell[1]
-        if isMax:
-            TTT[x][y] = 'o'
-        else:
-            TTT[x][y] = 'x'
-        score = minimax(TTT, not isMax)
-        TTT[x][y] = None
-        score[0], score[1] = x, y
-
-        if isMax:
-            if score[2] > best[2]:
-                best = score
-        else:
-            if score[2] < best[2]:
-                best = score
-
-    return best
-
-
-def alpha_beta(TTT, alpha, beta, isMax):
-    if isMax:
-        best = [-1, -1, -inf]
-    else:
-        best = [-1, -1, inf]
-
-    if len(empty_cells(TTT)) == 0 or is_winner(TTT):
-        score = eval(TTT)
-        return [-1, -1, score]
-
-    for cell in empty_cells(TTT):
-        x, y = cell[0], cell[1]
-        if isMax:
-            TTT[x][y] = 'o'
-        else:
-            TTT[x][y] = 'x'
-        score = alpha_beta(TTT, alpha, beta, not isMax)
-        TTT[x][y] = None
-        score[0], score[1] = x, y
-
-        if isMax:
-            if score[2] > best[2]:
-                best = score
-            alpha = max(alpha, best[2])
-            if beta <= alpha:
-                break
-        else:
-            if score[2] < best[2]:
-                best = score
-            beta = min(beta, best[2])
-            if beta <= alpha:
-                break
-
-    return best
-
-
-def depth_alphabeta(TTT, depth, alpha, beta, isMax):
-    if isMax:
-        best = [-1, -1, -inf]
-    else:
-        best = [-1, -1, inf]
-
-    if len(empty_cells(TTT)) == 0 or is_winner(TTT):
-        score = eval(TTT)
-        return [-1, -1, score]
-
-    # cutoff at depth of 3 and evaluate TTT state
-    if depth == 1:
-        result = eval_heuristic(TTT)
-        return [-1, -1, result]
-
-    for cell in empty_cells(TTT):
-        x, y = cell[0], cell[1]
-        if isMax:
-            TTT[x][y] = 'o'
-        else:
-            TTT[x][y] = 'x'
-        score = depth_alphabeta(TTT, depth+1, alpha, beta, not isMax)
-        TTT[x][y] = None
-        score[0], score[1] = x, y
-
-        if isMax:
-            if score[2] > best[2]:
-                best = score
-            alpha = max(alpha, best[2])
-            if beta <= alpha:
-                break
-        else:
-            if score[2] < best[2]:
-                best = score
-            beta = min(beta, best[2])
-            if beta <= alpha:
-                break
-
-    return best
-
-
-def eval_heuristic(TTT):
-
-    # no of possible wins in next 2 moves of AI
-    score_AI = 0
-    for cell_i in empty_cells(TTT):
-        x_i, y_i = cell_i[0], cell_i[1]
-        TTT[x_i][y_i] = 'o'
-        for cell_j in empty_cells(TTT):
-            x_j, y_j = cell_j[0], cell_j[1]
-            TTT[x_j][y_j] = 'o'
-            if is_winner(TTT) == 'o':
-                score_AI = score_AI + 1
-            TTT[x_j][y_j] = None
-        TTT[x_i][y_i] = None
-
-    # no of possible wins in next 2 moves of User
-    score_User = 0
-    for cell_i in empty_cells(TTT):
-        x_i, y_i = cell_i[0], cell_i[1]
-        TTT[x_i][y_i] = 'x'
-        for cell_j in empty_cells(TTT):
-            x_j, y_j = cell_j[0], cell_j[1]
-            TTT[x_j][y_j] = 'x'
-            if is_winner(TTT) == 'x':
-                score_User = score_User + 1
-            TTT[x_j][y_j] = None
-        TTT[x_i][y_i] = None
-
-    if score_AI > score_User:
-        score = 10
-    elif score_AI < score_User:
-        score = -10
-    else:
-        score = 0
-
-    return score
-
-
 def clean():
     os_name = platform.system().lower()
     if 'windows' in os_name:
@@ -430,15 +348,16 @@ def ai_turn(TTT, screen, ai_algo):
             move = depth_alphabeta(TTT, 0, -inf, inf, True)
         if ai_algo == 5:
             move = minimax_exper(TTT, 0, -inf, inf, True)
+        if ai_algo == 6:
+            move = random_cell(TTT)
     x, y = move[0], move[1]
 
     set_move(x, y, 'o', screen)
     print_board(TTT)
-    # time.sleep(1)
     print_status('x', False, False, screen)
 
 
-# fun to take the user input from cmd line for 6x6 grid
+""" fun to take the user input from cmd line for 6x6 grid """
 # def user_turn(TTT, screen):
 #     depth = len(empty_cells(TTT))
 #     if depth == 0 or is_winner(TTT):
@@ -478,7 +397,6 @@ def ai_turn(TTT, screen, ai_algo):
 
 
 def userClick(TTT, screen):
-    # print_status('x', False, False, screen)
     x, y = pygame.mouse.get_pos()
     col = 0
     row = 0
@@ -495,9 +413,7 @@ def userClick(TTT, screen):
             row = i
             break
 
-
     if (row and col and TTT[row-1][col-1] is None):
-        # print("row : ", row, "col: ", col)
         set_move(row-1, col-1, 'x', screen)
 
 
@@ -541,80 +457,177 @@ def get_grid_size():
             print("Enter a value between 4 and 10")
 
 
-def choose_algo():
-    while True:
-        print("Choose AI Algo. [1/2/3/4]")
-        print("1: minimax (Don't use this)")
-        print("2: minimax-AlphaBeta (You don't wanna use this too)")
-        print("3: depth limited Minimax")
-        print("4: depth limited AlphaBeta Minimax (Take this one)")
-        print("5: Experimental Minimax")
-        try:
-            choice = int(input())
-            return choice
-        except(KeyError, ValueError):
-            print("Bad Input")
+"""
+function to choose the AI algo from terminal
+"""
+
+
+# def choose_algo():
+#     while True:
+#         print("Choose AI Algo. [1/2/3/4]")
+#         print("1: minimax (Don't use this)")
+#         print("2: minimax-AlphaBeta (You don't wanna use this too)")
+#         print("3: depth limited Minimax")
+#         print("4: depth limited AlphaBeta Minimax (Take this one)")
+#         print("5: Experimental Minimax")
+#         print("6: Random")
+#         try:
+#             choice = int(input())
+#             return choice
+#         except(KeyError, ValueError):
+#             print("Bad Input")
 
 
 def main():
     clean()
     time_taken = []
     running = True
+    terminal_state = False
     global WIDTH, HEIGHT, SIZE, TTT
+
+    # buttons to be used in the opening screen
+    title = create_title_rect(30, 15, 350, 70, 'Open-Field Tic Tac Toe')
+    title_size = create_text_rect(30, 80, 350, 70, 'Choose Grid Size')
+    title_algo = create_text_rect(30, 80, 350, 70, 'Choose Algorithm')
+
+    # (x, y, w, h, text, fun)
+    grid_btn_4 = create_button(30, 150, 150, 40, "4x4", grid_size_4)
+    grid_btn_5 = create_button(230, 150, 150, 40, "5x5", grid_size_5)
+    grid_btn_6 = create_button(30, 230, 150, 40, "6x6", grid_size_6)
+    grid_btn_7 = create_button(230, 230, 150, 40, "7x7", grid_size_7)
+    grid_btn_8 = create_button(30, 310, 150, 40, "8x8", grid_size_8)
+    grid_btn_9 = create_button(230, 310, 150, 40, "9x9", grid_size_9)
+    grid_btn_10 = create_button(130, 390, 150, 40, "10x10", grid_size_10)
+    grid_btn_list = [grid_btn_4, grid_btn_5, grid_btn_6,
+                     grid_btn_7, grid_btn_8, grid_btn_9, grid_btn_10]
+
+    ai_btn_1 = create_button(75, 150, 250, 40, "Minimax (Don't)", get_algo_1)
+    ai_btn_2 = create_button(
+        75, 200, 250, 40, "AlphaBeta (Don't)", get_algo_2)
+    ai_btn_3 = create_button(
+        75, 250, 250, 40, "DepthLimit (Use This)", get_algo_3)
+    ai_btn_4 = create_button(
+        75, 300, 250, 40, "Depth_AB (Use This)", get_algo_4)
+    ai_btn_5 = create_button(
+        75, 350, 250, 40, "Experiment(Use This)", get_algo_5)
+    ai_btn_6 = create_button(
+        75, 400, 250, 40, "Random (Use This)", get_algo_6)
+
+    button_list = [ai_btn_1, ai_btn_2,
+                   ai_btn_3, ai_btn_4, ai_btn_5, ai_btn_6]
+
+    screen = open_window()
+    clock = pygame.time.Clock()
+    ai_algo = 0
+    grid_size = 0
+
     while running:
-        SIZE = get_grid_size()
-        ai_algo = choose_algo()
+        pygame.display.update()
+        clock.tick(30)
 
-        TTT = [[None for i in range(SIZE)] for j in range(SIZE)]
-        WIDTH = 70*SIZE
-        HEIGHT = 70*SIZE
+        if grid_size == 0 and ai_algo == 0:
+            screen.fill(BG_COLOR)
+            draw_button(title, screen)
+            draw_button(title_size, screen)
+            for btn in grid_btn_list:
+                draw_button(btn, screen)
 
-        screen = open_window()
-        game_start(screen)
-        print_status('x', False, False, screen)
-
-        terminal_state = False
-
-        while not terminal_state:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                    pygame.quit()
-                    sys.exit(0)
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.MOUSEBUTTONDOWN:
 
-                    # while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
-                        # if first == 'N':
-                        #     ai_turn(c_choice, h_choice)
-                        #     first = ''
-                    userClick(TTT, screen)
-                    game_over = is_game_over(TTT, screen)
+                    # 1 is the left mouse button, 2 is middle, 3 is right.
+                    if event.button == 1:
+                        for btn in grid_btn_list:
+                            if btn['rect'].collidepoint(event.pos):
+                                btn['color'] = ACTIVE_COLOR
+                                SIZE = btn['callback']()
+                                grid_size = SIZE
+                                print("grid size : ", SIZE)
+                                WIDTH = 70*SIZE
+                                HEIGHT = 70*SIZE
 
-                    if game_over:
-                        print("Avg time taken : ", sum(time_taken)/len(time_taken), "sec")
-                        reset_game(TTT, screen)
-                        pygame.quit()
-                        terminal_state = True
+                elif event.type == pygame.MOUSEMOTION:
+                    for btn in grid_btn_list:
+                        if btn['rect'].collidepoint(event.pos):
+                            btn['color'] = HOVER_COLOR
+                        else:
+                            btn['color'] = NORMAL_COLOR
+
+        elif grid_size is not 0 and ai_algo == 0:
+            pygame.display.flip()
+            screen.fill(BG_COLOR)
+            draw_button(title, screen)
+            draw_button(title_algo, screen)
+            for button in button_list:
+                draw_button(button, screen)
+
+            for event in pygame.event.get():
+
+                if event.type == pygame.QUIT:
+                    running = False
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if event.button == 1:
+                        for button in button_list:
+                            if button['rect'].collidepoint(event.pos):
+                                button['color'] = ACTIVE_COLOR
+                                ai_algo = button['callback']()
+                                print("AI_algo : ", ai_algo)
+
+                elif event.type == pygame.MOUSEMOTION:
+                    for button in button_list:
+                        if button['rect'].collidepoint(event.pos):
+                            button['color'] = HOVER_COLOR
+                        else:
+                            button['color'] = NORMAL_COLOR
+
+        elif grid_size is not 0 and ai_algo is not 0:
+            screen = open_window()
+            pygame.display.update()
+            game_start(screen)
+            print_status('x', False, False, screen)
+            TTT = [[None for i in range(SIZE)] for j in range(SIZE)]
+            while not terminal_state:
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
                         running = False
+                        pygame.quit()
+                        sys.exit(0)
 
-                    if len(empty_cells(TTT)) != 0:
-                        s_time = time.time()
-                        ai_turn(TTT, screen, ai_algo)
-                        e_time = time.time()
-                        del_time = e_time-s_time
-                        time_taken.append(del_time)
-                        print("Time Taken : ", del_time, "sec")
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+
+                        userClick(TTT, screen)
                         game_over = is_game_over(TTT, screen)
 
                         if game_over:
-                            print("Avg time taken : ", sum(time_taken)/len(time_taken))
+                            print("Avg time taken : ", sum(
+                                time_taken)/len(time_taken), "sec")
                             reset_game(TTT, screen)
                             pygame.quit()
                             terminal_state = True
                             running = False
-    pygame.quit()
-    # exit()
+
+                        if len(empty_cells(TTT)) != 0:
+                            s_time = time.time()
+                            ai_turn(TTT, screen, ai_algo)
+                            e_time = time.time()
+                            del_time = e_time-s_time
+                            time_taken.append(del_time)
+                            print("Time Taken : ", del_time, "sec")
+                            game_over = is_game_over(TTT, screen)
+
+                            if game_over:
+                                print("Avg time taken : ", sum(
+                                    time_taken)/len(time_taken))
+                                reset_game(TTT, screen)
+                                pygame.quit()
+                                terminal_state = True
+                                running = False
 
 
 if __name__ == "__main__":

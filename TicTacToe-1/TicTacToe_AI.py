@@ -406,30 +406,6 @@ def is_game_over(TTT, screen):
         return False
 
 
-def get_algo_1():
-    return 1
-
-
-def get_algo_2():
-    return 2
-
-
-def get_algo_3():
-    return 3
-
-
-def get_algo_4():
-    return 4
-
-
-def get_algo_5():
-    return 5
-
-
-def get_algo_6():
-    return 6
-
-
 def play_again(TTT, screen):
     while True:
         pygame.display.update()
@@ -460,21 +436,23 @@ def play_again(TTT, screen):
 #     else:
 #         return 'o'
 
-
-def choose_algo():
-    while True:
-        print("Choose AI Algo. [1/2/3/4]")
-        print("1: minimax")
-        print("2: minimax-AlphaBeta")
-        print("3: depth limited Minimax")
-        print("4: depth limited AlphaBeta Minimax")
-        print("5: Experimental Minimax")
-        print("6: Random")
-        try:
-            choice = int(input())
-            return choice
-        except(KeyError, ValueError):
-            print("Bad Input")
+"""
+function to choose the AI algo from terminal
+"""
+# def choose_algo():
+#     while True:
+#         print("Choose AI Algo. [1/2/3/4]")
+#         print("1: minimax")
+#         print("2: minimax-AlphaBeta")
+#         print("3: depth limited Minimax")
+#         print("4: depth limited AlphaBeta Minimax")
+#         print("5: Experimental Minimax")
+#         print("6: Random")
+#         try:
+#             choice = int(input())
+#             return choice
+#         except(KeyError, ValueError):
+#             print("Bad Input")
 
 
 def main():
@@ -483,6 +461,7 @@ def main():
     running = True
     terminal_state = False
 
+    # buttons to be used in the opening screen
     title = create_title_rect(30, 15, 350, 70, 'Tic Tac Toe')
     title_algo = create_text_rect(30, 80, 350, 70, 'Choose Algorithm')
     ai_butn_1 = create_button(30, 150, 150, 80, 'Minimax', get_algo_1)
@@ -543,6 +522,9 @@ def main():
             while not terminal_state:
 
                 for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        terminal_state = True
+                        running = False
                     if event.type == pygame.MOUSEBUTTONDOWN:
 
                         userClick(TTT, screen)
