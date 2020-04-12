@@ -17,11 +17,13 @@ HEIGHT = 400
 # colours
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-RED = (255, 0, 0)
+RED = pygame.Color('indianred1')
+# RED = (255, 0, 0)
 LINE_COLOUR = (10, 10, 10)
 BG_COLOR = (80, 80, 80)
+TEXT_COLOR = pygame.Color('ivory')
 BG_COLOR_2 = pygame.Color('darkslategrey')
-BG_COLOR_3 = pygame.Color('purple4')
+BG_COLOR_3 = pygame.Color('slateblue4')
 NORMAL_COLOR = pygame.Color('tan2')
 HOVER_COLOR = pygame.Color('tan3')
 ACTIVE_COLOR = pygame.Color('forestgreen')
@@ -76,9 +78,10 @@ def create_button(x, y, w, h, text, callback):
     }
     return button
 
-def create_text_button(x, y, w, h, text):
 
-    text_surf = FONT.render(text, True, WHITE)
+def create_title_rect(x, y, w, h, text):
+
+    text_surf = FONT.render(text, True, TEXT_COLOR)
     button_rect = pygame.Rect(x, y, w, h)
     text_rect = text_surf.get_rect(center=button_rect.center)
     button = {
@@ -88,6 +91,21 @@ def create_text_button(x, y, w, h, text):
         'color': BG_COLOR_3,
     }
     return button
+
+
+def create_text_rect(x, y, w, h, text):
+
+    text_surf = FONT.render(text, True, WHITE)
+    button_rect = pygame.Rect(x, y, w, h)
+    text_rect = text_surf.get_rect(center=button_rect.center)
+    button = {
+        'rect': button_rect,
+        'text': text_surf,
+        'text rect': text_rect,
+        'color': BG_COLOR_2,
+    }
+    return button
+
 
 def game_start(screen):
 
@@ -297,43 +315,42 @@ def ai_turn(TTT, screen, ai_algo):
     print_board(TTT)
     print_status('x', False, False, screen)
 
+# fun to take the user input from cmd line for 3x3 grid
+# def user_turn(TTT, screen):
+#     depth = len(empty_cells(TTT))
+#     if depth == 0 or is_winner(TTT):
+#         return
 
-def user_turn(TTT, screen):
-    depth = len(empty_cells(TTT))
-    if depth == 0 or is_winner(TTT):
-        return
+#     clean()
+#     print("USER TURN")
+#     print_board(TTT)
 
-    clean()
-    print("USER TURN")
-    print_board(TTT)
+#     print_status('x', False, False, screen)
 
-    print_status('x', False, False, screen)
+#     move = -1
+#     moves = {
+#         1: [0, 0], 2: [0, 1], 3: [0, 2],
+#         4: [1, 0], 5: [1, 1], 6: [1, 2],
+#         7: [2, 0], 8: [2, 1], 9: [2, 2],
+#     }
 
-    move = -1
-    moves = {
-        1: [0, 0], 2: [0, 1], 3: [0, 2],
-        4: [1, 0], 5: [1, 1], 6: [1, 2],
-        7: [2, 0], 8: [2, 1], 9: [2, 2],
-    }
+#     while move < 1 or move > 9:
+#         try:
+#             move = int(input("Enter ip move position (1...9):"))
+#             coord = moves[move]
+#             move_possib = set_move(coord[0], coord[1], 'x', screen)
 
-    while move < 1 or move > 9:
-        try:
-            move = int(input("Enter ip move position (1...9):"))
-            coord = moves[move]
-            move_possib = set_move(coord[0], coord[1], 'x', screen)
-
-            if not move_possib:
-                print("Incorrect Move")
-                move = -1
-        except (EOFError, KeyboardInterrupt):
-            print('Bye')
-            exit()
-        except (KeyError, ValueError):
-            print('Bad Input')
+#             if not move_possib:
+#                 print("Incorrect Move")
+#                 move = -1
+#         except (EOFError, KeyboardInterrupt):
+#             print('Bye')
+#             exit()
+#         except (KeyError, ValueError):
+#             print('Bad Input')
 
 
 def userClick(TTT, screen):
-    # print_status('x', False, False, screen)
     x, y = pygame.mouse.get_pos()
 
     # col clicked
@@ -407,6 +424,8 @@ def get_algo_4():
 
 def get_algo_5():
     return 5
+
+
 def get_algo_6():
     return 6
 
@@ -425,21 +444,21 @@ def play_again(TTT, screen):
             print("Please respond with 'Y' or 'N'.\n")
 
 
-def get_first_player():
-    first_move = ''
-    while first_move != 'y' and first_move != 'n':
-        try:
-            first_move = input(
-                'Want to start first?[Y/N]: ').lower()
-        except (EOFError, KeyboardInterrupt):
-            print('Bye')
-            exit()
-        except (KeyError, ValueError):
-            print('Bad Input')
-    if first_move == 'y':
-        return 'x'
-    else:
-        return 'o'
+# def get_first_player():
+#     first_move = ''
+#     while first_move != 'y' and first_move != 'n':
+#         try:
+#             first_move = input(
+#                 'Want to start first?[Y/N]: ').lower()
+#         except (EOFError, KeyboardInterrupt):
+#             print('Bye')
+#             exit()
+#         except (KeyError, ValueError):
+#             print('Bad Input')
+#     if first_move == 'y':
+#         return 'x'
+#     else:
+#         return 'o'
 
 
 def choose_algo():
@@ -464,7 +483,8 @@ def main():
     running = True
     terminal_state = False
 
-    title = create_text_button(30, 50, 350, 70, 'Choose Algorithm')
+    title = create_title_rect(30, 15, 350, 70, 'Tic Tac Toe')
+    title_algo = create_text_rect(30, 80, 350, 70, 'Choose Algorithm')
     ai_butn_1 = create_button(30, 150, 150, 80, 'Minimax', get_algo_1)
     ai_butn_2 = create_button(230, 150, 150, 80, 'AlphaBeta', get_algo_2)
     ai_butn_3 = create_button(30, 250, 150, 80, 'DepthLimit', get_algo_3)
@@ -472,19 +492,12 @@ def main():
     ai_butn_5 = create_button(30, 350, 150, 80, 'Experiment', get_algo_5)
     ai_butn_6 = create_button(230, 350, 150, 80, 'Random', get_algo_6)
 
-    button_list = [ai_butn_1, ai_butn_2, ai_butn_3, ai_butn_4, ai_butn_5, ai_butn_6]
+    button_list = [ai_butn_1, ai_butn_2,
+                   ai_butn_3, ai_butn_4, ai_butn_5, ai_butn_6]
 
-    # while running:
     screen = open_window()
     clock = pygame.time.Clock()
     ai_algo = 0
-    # ai_algo = get_algo_1(screen)
-    # ai_algo = choose_algo()
-
-    # player = get_first_player()
-    # if player == 'o':
-    #     ai_turn(screen)
-    #     # first_move = ''
 
     while running:
         pygame.display.update()
@@ -492,9 +505,9 @@ def main():
         if ai_algo == 0:
             screen.fill(BG_COLOR_2)
             draw_button(title, screen)
+            draw_button(title_algo, screen)
             for button in button_list:
                 draw_button(button, screen)
-            
 
             for event in pygame.event.get():
 
@@ -514,8 +527,6 @@ def main():
                                 button['color'] = ACTIVE_COLOR
                                 ai_algo = button['callback']()
                                 print(ai_algo)
-                                # running = False
-                                # break
 
                 elif event.type == pygame.MOUSEMOTION:
                     for button in button_list:
@@ -534,9 +545,6 @@ def main():
                 for event in pygame.event.get():
                     if event.type == pygame.MOUSEBUTTONDOWN:
 
-                        # while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
-
-                        # if event.type == pygame.MOUSEBUTTONDOWN:
                         userClick(TTT, screen)
                         # user_turn(TTT, screen)
                         game_over = is_game_over(TTT, screen)
@@ -548,8 +556,6 @@ def main():
                             pygame.quit()
                             terminal_state = True
                             running = False
-                            # pygame.event.get()
-                            # terminal_state = play_again(TTT, screen)
 
                         # else:
                         if len(empty_cells(TTT)) != 0:
@@ -569,10 +575,6 @@ def main():
                                 pygame.quit()
                                 terminal_state = True
                                 running = False
-                                # pygame.event.get()
-                                # terminal_state = play_again(TTT, screen)
-
-    # exit()
 
 
 if __name__ == '__main__':
