@@ -35,9 +35,9 @@ o_img = pygame.image.load("O.png")
 
 # resize to proper scale
 x_img = pygame.transform.scale(
-    x_img, (floor(WIDTH/(SIZE*2)), floor(WIDTH/(SIZE*2))))
+    x_img, (floor(WIDTH/(SIZE)), floor(WIDTH/(SIZE))))
 o_img = pygame.transform.scale(
-    o_img, (floor(WIDTH/(SIZE*2)), floor(WIDTH/(SIZE*2))))
+    o_img, (floor(WIDTH/(SIZE)), floor(WIDTH/(SIZE))))
 
 
 def open_window():
@@ -57,47 +57,22 @@ def game_start(screen):
         pygame.draw.line(screen, LINE_COLOUR, (WIDTH/SIZE*i, 0),
                          (WIDTH/SIZE*i, HEIGHT), 7)
 
-        # pygame.draw.line(screen, LINE_COLOUR, (WIDTH/SIZE, 0),
-        #                 (WIDTH/SIZE, HEIGHT), 7)
-        # pygame.draw.line(screen, LINE_COLOUR, (WIDTH/SIZE*2, 0),
-        #                 (WIDTH/SIZE*2, HEIGHT), 7)
-        # pygame.draw.line(screen, LINE_COLOUR, (WIDTH/SIZE*3, 0),
-        #                 (WIDTH/SIZE*3, HEIGHT), 7)
-        # pygame.draw.line(screen, LINE_COLOUR, (WIDTH/SIZE*4, 0),
-        #                 (WIDTH/SIZE*4, HEIGHT), 7)
-        # pygame.draw.line(screen, LINE_COLOUR, (WIDTH/SIZE*5, 0),
-        #                 (WIDTH/SIZE*5, HEIGHT), 7)
-
     # horizontal lines
     for i in range(1, SIZE):
         pygame.draw.line(screen, LINE_COLOUR, (0, HEIGHT/SIZE*i),
                          (WIDTH, HEIGHT/SIZE*i), 7)
 
     pygame.display.update()
-    # print_status()
 
 
 def draw_OX(row, col, OX, screen):
     for i in range(1, SIZE+1):
         if row == i:
-            posX = 30 + WIDTH/SIZE*(i-1)
+            posX = 20 + WIDTH/SIZE * (i-1)
 
     for i in range(1, SIZE+1):
         if col == i:
-            posY = 30 + HEIGHT/SIZE * (i-1)
-
-        # if col == 1:
-        #     posY = 30
-        # if col == 2:
-        #     posY = HEIGHT/SIZE + 30
-        # if col == 3:
-        #     posY = HEIGHT/SIZE*2 + 30
-        # if col == 4:
-        #     posY = HEIGHT/SIZE*3 + 30
-        # if col == 5:
-        #     posY = HEIGHT/SIZE*4 + 30
-        # if col == 6:
-        #     posY = HEIGHT/SIZE*5 + 30
+            posY = 20 + HEIGHT/SIZE * (i-1)
 
     if(OX == 'x'):
         screen.blit(x_img, (posY, posX))
@@ -109,53 +84,53 @@ def draw_OX(row, col, OX, screen):
 
 def draw_win_line(TTT, screen):
     # winning rows
-    for row in range(0, 6):
-        for j in range(0, 3):
+    for row in range(0, SIZE):
+        for j in range(0, SIZE-3):
             if ((TTT[row][j] is not None) and (TTT[row][j]
                                                == TTT[row][j+1]
                                                == TTT[row][j+2]
                                                == TTT[row][j+3])):
                 pygame.draw.line(screen, RED,
-                                 ((j+1)*WIDTH/6-WIDTH/12,
-                                  (row+1)*HEIGHT/6-HEIGHT/12),
-                                 ((j+4)*WIDTH/6-WIDTH/12, (row+1)*HEIGHT/6-HEIGHT/12), 4)
+                                 ((j+1)*WIDTH/SIZE-WIDTH/(SIZE*2),
+                                  (row+1)*HEIGHT/SIZE-HEIGHT/(SIZE*2)),
+                                 ((j+4)*WIDTH/SIZE-WIDTH/(SIZE*2), (row+1)*HEIGHT/SIZE-HEIGHT/(SIZE*2)), 4)
             break
 
     # winning columns
-    for col in range(0, 6):
-        for i in range(0, 3):
+    for col in range(0, SIZE):
+        for i in range(0, SIZE-3):
             if((TTT[i][col] is not None) and (TTT[i][col]
                                               == TTT[i+1][col]
                                               == TTT[i+2][col]
                                               == TTT[i+3][col])):
                 pygame.draw.line(screen, RED,
-                                 ((col+1)*WIDTH/6-WIDTH/12,
-                                  (i+1)*HEIGHT/6-HEIGHT/12),
-                                 ((col+1)*WIDTH/6-WIDTH/12, (i+4)*HEIGHT/6-HEIGHT/12), 4)
+                                 ((col+1)*WIDTH/SIZE-WIDTH/(SIZE*2),
+                                  (i+1)*HEIGHT/SIZE-HEIGHT/(SIZE*2)),
+                                 ((col+1)*WIDTH/SIZE-WIDTH/(SIZE*2), (i+4)*HEIGHT/SIZE-HEIGHT/(SIZE*2)), 4)
             break
 
     # diagonal winners
-    for i in range(0, 3):
-        for j in range(0, 3):
+    for i in range(0, SIZE-3):
+        for j in range(0, SIZE-3):
             if((TTT[i][j] is not None) and (TTT[i][j]
                                             == TTT[i+1][j+1]
                                             == TTT[i+2][j+2]
                                             == TTT[i+3][j+3])):
                 pygame.draw.line(screen, RED,
-                                 ((j+1)*WIDTH/6-WIDTH/12,
-                                  (i+1)*HEIGHT/6-HEIGHT/12),
-                                 ((j+4)*WIDTH/6-WIDTH/12, (i+4)*HEIGHT/6-HEIGHT/12), 4)
+                                 ((j+1)*WIDTH/SIZE-WIDTH/(SIZE*2),
+                                  (i+1)*HEIGHT/SIZE-HEIGHT/(SIZE*2)),
+                                 ((j+4)*WIDTH/SIZE-WIDTH/(SIZE*2), (i+4)*HEIGHT/SIZE-HEIGHT/(SIZE*2)), 4)
 
-    for i in range(0, 3):
-        for j in range(5, 2, -1):
+    for i in range(0, SIZE-3):
+        for j in range(SIZE-1, 2, -1):
             if ((TTT[i][j] is not None) and (TTT[i][j]
                                              == TTT[i+1][j-1]
                                              == TTT[i+2][j-2]
                                              == TTT[i+3][j-3])):
                 pygame.draw.line(screen, RED,
-                                 ((j+1)*WIDTH/6-WIDTH/12,
-                                  (i+1)*HEIGHT/6-HEIGHT/12),
-                                 ((j-2)*WIDTH/6-WIDTH/12, (i+4)*HEIGHT/6-HEIGHT/12), 4)
+                                 ((j+1)*WIDTH/SIZE-WIDTH/(SIZE*2),
+                                  (i+1)*HEIGHT/SIZE-HEIGHT/(SIZE*2)),
+                                 ((j-2)*WIDTH/SIZE-WIDTH/(SIZE*2), (i+4)*HEIGHT/SIZE-HEIGHT/(SIZE*2)), 4)
 
 
 def print_status(playerTurn, isOver, winner, screen):
@@ -428,7 +403,6 @@ def clean():
 def reset_game(TTT, screen):
     time.sleep(2)
     game_start(screen)
-    # TTT = [[None]*3, [None]*3, [None]*3]
 
 
 def ai_turn(TTT, screen, ai_algo):
@@ -436,7 +410,7 @@ def ai_turn(TTT, screen, ai_algo):
     if depth == 0 or is_winner(TTT):
         return
 
-    # clean()
+    clean()
     print("AI TURN")
 
     print_status('o', False, False, screen)
@@ -463,6 +437,7 @@ def ai_turn(TTT, screen, ai_algo):
     print_status('x', False, False, screen)
 
 
+# fun to take the user input from cmd line for 6x6 grid
 # def user_turn(TTT, screen):
 #     depth = len(empty_cells(TTT))
 #     if depth == 0 or is_winner(TTT):
@@ -511,71 +486,41 @@ def userClick(TTT, screen):
     for i in range(1, SIZE+1):
         if(x < floor(WIDTH/SIZE*i)):
             col = i
-            # print("col:", col, "x: ", x, "<", floor(WIDTH/SIZE*i))
             break
-
-    # if(x < WIDTH/6):
-    #     col = 1
-    # elif(x < WIDTH/6*2):
-    #     col = 2
-    # elif(x < WIDTH/6*3):
-    #     col = 3
-    # elif(x < WIDTH/6*4):
-    #     col = 4
-    # elif(x < WIDTH/6*5):
-    #     col = 5
-    # elif(x < WIDTH):
-    #     col = 6
-    # else:
 
     # row clicked
     for i in range(1, SIZE+1):
         if (y < floor(HEIGHT/SIZE*i)):
             row = i
-            # print("row:", row, "y: ", y, "<", floor(HEIGHT/SIZE*i))
             break
 
-    # if(y < HEIGHT/6):
-    #     row = 1
-    # elif(y < HEIGHT/6*2):
-    #     row = 2
-    # elif(y < HEIGHT/6*3):
-    #     row = 3
-    # elif(y < HEIGHT/6*4):
-    #     row = 4
-    # elif(y < HEIGHT/6*5):
-    #     row = 5
-    # elif(y < HEIGHT):
-    #     row = 6
-    # else:
-    #     row = None
 
     if (row and col and TTT[row-1][col-1] is None):
-        print("row : ", row, "col: ", col)
+        # print("row : ", row, "col: ", col)
         set_move(row-1, col-1, 'x', screen)
 
 
 def is_game_over(TTT, screen):
     # game over conditions
     if is_winner(TTT) == 'x':
-        # clean()
+        clean()
         print("USER TURN")
         print_board(TTT)
         print("YOU WIN !!")
-        # draw_win_line(TTT, screen)
+        draw_win_line(TTT, screen)
         print_status(False, True, 'x', screen)
         return True
 
     elif is_winner(TTT) == 'o':
-        # clean()
+        clean()
         print("AI TURN")
         print_board(TTT)
         print("AI WINS !!")
-        # draw_win_line(TTT, screen)
+        draw_win_line(TTT, screen)
         print_status(False, True, 'o', screen)
         return True
     elif len(empty_cells(TTT)) == 0 or is_winner(TTT):
-        # clean()
+        clean()
         print_board(TTT)
         print("DRAW -_-")
         print_status(False, True, False, screen)
@@ -598,10 +543,10 @@ def get_grid_size():
 def choose_algo():
     while True:
         print("Choose AI Algo. [1/2/3/4]")
-        print("1: minimax")
-        print("2: minimax-AlphaBeta")
+        print("1: minimax (Don't use this)")
+        print("2: minimax-AlphaBeta (You don't wanna use this too)")
         print("3: depth limited Minimax")
-        print("4: depth limited AlphaBeta Minimax")
+        print("4: depth limited AlphaBeta Minimax (Take this one)")
         print("5: Experimental Minimax")
         try:
             choice = int(input())
