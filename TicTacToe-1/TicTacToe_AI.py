@@ -8,21 +8,29 @@ from random import choice
 from pygame.locals import *
 from AI_algo import *
 
+pygame.init()
 # global variables
+
 WIDTH = 400
 HEIGHT = 400
 
 # colours
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 LINE_COLOUR = (10, 10, 10)
 BG_COLOR = (80, 80, 80)
+BG_COLOR_2 = pygame.Color('darkslategrey')
+BG_COLOR_3 = pygame.Color('purple4')
+NORMAL_COLOR = pygame.Color('tan2')
+HOVER_COLOR = pygame.Color('tan3')
+ACTIVE_COLOR = pygame.Color('forestgreen')
 
+FONT = pygame.font.SysFont('Comic Sans MS', 20)
 TTT = [[None]*3, [None]*3, [None]*3]
 
 
 # initialize pygame window
-pygame.init()
 FPS = 30
 CLOCK = pygame.time.Clock()
 
@@ -41,6 +49,45 @@ def open_window():
     pygame.display.set_caption("Tic Tac Toe with AI")
     return screen
 
+
+def draw_button(button, screen):
+    """Draw the button rect and the text surface."""
+    pygame.draw.rect(screen, button['color'], button['rect'])
+    screen.blit(button['text'], button['text rect'])
+
+
+def create_button(x, y, w, h, text, callback):
+    """A button is a dictionary that contains the relevant data.
+
+    Consists of a rect, text surface and text rect, color and a
+    callback function.
+    """
+    # The button is a dictionary consisting of the rect, text,
+    # text rect, color and the callback function.
+    text_surf = FONT.render(text, True, BLACK)
+    button_rect = pygame.Rect(x, y, w, h)
+    text_rect = text_surf.get_rect(center=button_rect.center)
+    button = {
+        'rect': button_rect,
+        'text': text_surf,
+        'text rect': text_rect,
+        'color': NORMAL_COLOR,
+        'callback': callback,
+    }
+    return button
+
+def create_text_button(x, y, w, h, text):
+
+    text_surf = FONT.render(text, True, WHITE)
+    button_rect = pygame.Rect(x, y, w, h)
+    text_rect = text_surf.get_rect(center=button_rect.center)
+    button = {
+        'rect': button_rect,
+        'text': text_surf,
+        'text rect': text_rect,
+        'color': BG_COLOR_3,
+    }
+    return button
 
 def game_start(screen):
 
@@ -242,11 +289,12 @@ def ai_turn(TTT, screen, ai_algo):
             move = depth_alphabeta(TTT, 0, -inf, inf, True)
         if ai_algo == 5:
             move = minimax_exper(TTT, 0, -inf, inf, True)
+        if ai_algo == 6:
+            move = random_cell(TTT)
         x, y = move[0], move[1]
 
     set_move(x, y, 'o', screen)
     print_board(TTT)
-    # time.sleep(1)
     print_status('x', False, False, screen)
 
 
@@ -341,6 +389,28 @@ def is_game_over(TTT, screen):
         return False
 
 
+def get_algo_1():
+    return 1
+
+
+def get_algo_2():
+    return 2
+
+
+def get_algo_3():
+    return 3
+
+
+def get_algo_4():
+    return 4
+
+
+def get_algo_5():
+    return 5
+def get_algo_6():
+    return 6
+
+
 def play_again(TTT, screen):
     while True:
         pygame.display.update()
@@ -380,6 +450,7 @@ def choose_algo():
         print("3: depth limited Minimax")
         print("4: depth limited AlphaBeta Minimax")
         print("5: Experimental Minimax")
+        print("6: Random")
         try:
             choice = int(input())
             return choice
@@ -391,68 +462,115 @@ def main():
     clean()
     time_taken = []
     running = True
+    terminal_state = False
+
+    title = create_text_button(30, 50, 350, 70, 'Choose Algorithm')
+    ai_butn_1 = create_button(30, 150, 150, 80, 'Minimax', get_algo_1)
+    ai_butn_2 = create_button(230, 150, 150, 80, 'AlphaBeta', get_algo_2)
+    ai_butn_3 = create_button(30, 250, 150, 80, 'DepthLimit', get_algo_3)
+    ai_butn_4 = create_button(230, 250, 150, 80, 'Depth_AB', get_algo_4)
+    ai_butn_5 = create_button(30, 350, 150, 80, 'Experiment', get_algo_5)
+    ai_butn_6 = create_button(230, 350, 150, 80, 'Random', get_algo_6)
+
+    button_list = [ai_butn_1, ai_butn_2, ai_butn_3, ai_butn_4, ai_butn_5, ai_butn_6]
+
+    # while running:
+    screen = open_window()
+    clock = pygame.time.Clock()
+    ai_algo = 0
+    # ai_algo = get_algo_1(screen)
+    # ai_algo = choose_algo()
+
+    # player = get_first_player()
+    # if player == 'o':
+    #     ai_turn(screen)
+    #     # first_move = ''
 
     while running:
-        screen = open_window()
-        game_start(screen)
-        ai_algo = choose_algo()
-        print_status('x', False, False, screen)
-
-        terminal_state = False
-
-        # player = get_first_player()
-        # if player == 'o':
-        #     ai_turn(screen)
-        #     # first_move = ''
-
-        while not terminal_state:
+        pygame.display.update()
+        clock.tick(30)
+        if ai_algo == 0:
+            screen.fill(BG_COLOR_2)
+            draw_button(title, screen)
+            for button in button_list:
+                draw_button(button, screen)
+            
 
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
                     running = False
-                    pygame.quit()
-                    sys.exit(0)
+                    # pygame.quit()
+                    # sys.exit(0)
 
                 # else:
-                if event.type == pygame.MOUSEBUTTONDOWN:
 
-                    # while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
+                elif event.type == pygame.MOUSEBUTTONDOWN:
 
-                    # if event.type == pygame.MOUSEBUTTONDOWN:
-                    userClick(TTT, screen)
-                    # user_turn(TTT, screen)
-                    game_over = is_game_over(TTT, screen)
+                    # 1 is the left mouse button, 2 is middle, 3 is right.
+                    if event.button == 1:
+                        for button in button_list:
+                            if button['rect'].collidepoint(event.pos):
+                                button['color'] = ACTIVE_COLOR
+                                ai_algo = button['callback']()
+                                print(ai_algo)
+                                # running = False
+                                # break
 
-                    if game_over:
-                        print("Avg time taken : ", sum(time_taken)/len(time_taken))
-                        reset_game(TTT, screen)
-                        pygame.quit()
-                        terminal_state = True
-                        running = False
-                        # pygame.event.get()
-                        # terminal_state = play_again(TTT, screen)
+                elif event.type == pygame.MOUSEMOTION:
+                    for button in button_list:
+                        if button['rect'].collidepoint(event.pos):
+                            button['color'] = HOVER_COLOR
+                        else:
+                            button['color'] = NORMAL_COLOR
 
-                    # else:
-                    if len(empty_cells(TTT)) != 0:
-                        s_time = time.time()
-                        ai_turn(TTT, screen, ai_algo)
-                        e_time = time.time()
-                        del_time = e_time-s_time
-                        time_taken.append(del_time)
-                        print("Time Taken : ", del_time, "sec")
+        elif ai_algo is not 0:
 
+            pygame.display.update()
+            game_start(screen)
+            print_status('x', False, False, screen)
+            while not terminal_state:
+
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+
+                        # while len(empty_cells(TTT)) > 0 and not is_winner(TTT):
+
+                        # if event.type == pygame.MOUSEBUTTONDOWN:
+                        userClick(TTT, screen)
+                        # user_turn(TTT, screen)
                         game_over = is_game_over(TTT, screen)
 
                         if game_over:
-                            print("Avg time taken : ", sum(time_taken)/len(time_taken))
+                            print("Avg time taken : ", sum(
+                                time_taken)/len(time_taken))
                             reset_game(TTT, screen)
                             pygame.quit()
                             terminal_state = True
                             running = False
                             # pygame.event.get()
                             # terminal_state = play_again(TTT, screen)
-                    # pygame.event.pump()
+
+                        # else:
+                        if len(empty_cells(TTT)) != 0:
+                            s_time = time.time()
+                            ai_turn(TTT, screen, ai_algo)
+                            e_time = time.time()
+                            del_time = e_time-s_time
+                            time_taken.append(del_time)
+                            print("Time Taken : ", del_time, "sec")
+
+                            game_over = is_game_over(TTT, screen)
+
+                            if game_over:
+                                print("Avg time taken : ", sum(
+                                    time_taken)/len(time_taken))
+                                reset_game(TTT, screen)
+                                pygame.quit()
+                                terminal_state = True
+                                running = False
+                                # pygame.event.get()
+                                # terminal_state = play_again(TTT, screen)
 
     # exit()
 

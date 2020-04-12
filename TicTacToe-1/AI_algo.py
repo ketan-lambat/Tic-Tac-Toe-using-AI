@@ -1,5 +1,15 @@
+import random
 from TicTacToe_AI import *
 # if AI turn isMax = True
+
+
+def random_cell(TTT):
+    rndm_num = random.randint(0, len(empty_cells(TTT))-1)
+    cells = empty_cells(TTT)
+    rndm_cell = cells[rndm_num]
+    return rndm_cell
+
+
 def minimax(TTT, isMax):
     if isMax:
         best = [-1, -1, -inf]
