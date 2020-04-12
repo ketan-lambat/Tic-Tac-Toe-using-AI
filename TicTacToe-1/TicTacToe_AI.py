@@ -19,8 +19,7 @@ LINE_COLOUR = (10, 10, 10)
 BG_COLOR = (80, 80, 80)
 
 TTT = [[None]*3, [None]*3, [None]*3]
-# USER = -1
-# AI = 1
+
 
 # initialize pygame window
 pygame.init()
@@ -62,7 +61,6 @@ def game_start(screen):
                      (WIDTH, HEIGHT/3*2), 7)
 
     pygame.display.update()
-    # print_status()
 
 
 def draw_OX(row, col, OX, screen):
@@ -157,23 +155,16 @@ def is_winner(TTT):
     for row in range(0, 3):
         if ((TTT[row][0] is not None) and (TTT[row][0] == TTT[row][1] == TTT[row][2])):
             return TTT[row][0]
-            # return True
 
     for col in range(0, 3):
         if((TTT[0][col] is not None) and (TTT[0][col] == TTT[1][col] == TTT[2][col])):
             return TTT[0][col]
-            # return True
 
     if((TTT[0][0] is not None) and (TTT[0][0] == TTT[1][1] == TTT[2][2])):
         return TTT[0][0]
-        # return True
 
     if((TTT[0][2] is not None) and (TTT[0][2] == TTT[1][1] == TTT[2][0])):
         return TTT[0][2]
-        # return True
-
-    # if len(empty_cells(TTT)) == 0 and (all([all(row) for row in TTT])):
-    #     return 'draw'
 
     return None
 
@@ -398,7 +389,7 @@ def choose_algo():
 
 def main():
     clean()
-
+    time_taken = []
     running = True
 
     while running:
@@ -434,6 +425,7 @@ def main():
                     game_over = is_game_over(TTT, screen)
 
                     if game_over:
+                        print("Avg time taken : ", sum(time_taken)/len(time_taken))
                         reset_game(TTT, screen)
                         pygame.quit()
                         terminal_state = True
@@ -442,13 +434,18 @@ def main():
                         # terminal_state = play_again(TTT, screen)
 
                     # else:
-                    # user_turn()
                     if len(empty_cells(TTT)) != 0:
+                        s_time = time.time()
                         ai_turn(TTT, screen, ai_algo)
+                        e_time = time.time()
+                        del_time = e_time-s_time
+                        time_taken.append(del_time)
+                        print("Time Taken : ", del_time, "sec")
 
                         game_over = is_game_over(TTT, screen)
 
                         if game_over:
+                            print("Avg time taken : ", sum(time_taken)/len(time_taken))
                             reset_game(TTT, screen)
                             pygame.quit()
                             terminal_state = True
@@ -457,8 +454,6 @@ def main():
                             # terminal_state = play_again(TTT, screen)
                     # pygame.event.pump()
 
-                    # pygame.event.pump()
-            #     CLOCK.tick(FPS)
     # exit()
 
 

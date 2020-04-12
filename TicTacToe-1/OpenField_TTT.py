@@ -20,7 +20,8 @@ TTT = [[None]*3, [None]*3, [None]*3]
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 LINE_COLOUR = (10, 10, 10)
-BG_COLOR = (33, 47, 60)
+# BG_COLOR = (33, 47, 60)
+BG_COLOR = (163, 0, 204)
 
 
 # initialize pygame window
@@ -557,7 +558,7 @@ def choose_algo():
 
 def main():
     clean()
-
+    time_taken = []
     running = True
     global WIDTH, HEIGHT, SIZE, TTT
     while running:
@@ -591,17 +592,23 @@ def main():
                     game_over = is_game_over(TTT, screen)
 
                     if game_over:
+                        print("Avg time taken : ", sum(time_taken)/len(time_taken), "sec")
                         reset_game(TTT, screen)
                         pygame.quit()
                         terminal_state = True
                         running = False
 
                     if len(empty_cells(TTT)) != 0:
+                        s_time = time.time()
                         ai_turn(TTT, screen, ai_algo)
-
+                        e_time = time.time()
+                        del_time = e_time-s_time
+                        time_taken.append(del_time)
+                        print("Time Taken : ", del_time, "sec")
                         game_over = is_game_over(TTT, screen)
 
                         if game_over:
+                            print("Avg time taken : ", sum(time_taken)/len(time_taken))
                             reset_game(TTT, screen)
                             pygame.quit()
                             terminal_state = True
