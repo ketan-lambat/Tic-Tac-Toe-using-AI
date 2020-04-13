@@ -35,9 +35,9 @@ pip install pygame
 ![AI Time Taken](/img/3.AI_TimeTaken.jpg)
 7. If either of the player wins, you can see that with the strike through line across the winning cells, or a Game Draw message if all the cells are filled (simple Tic Tac Toe rule).
 ![AI Wins](/img/4.AI_wins.jpg)
-![Game Draw](/img/5.Draw.jpg)
 
 8. The **average time taken by the AI algo is printed in the console window** after the game ends and the game application window closes.
+![Game Draw](/img/5.Draw.jpg)
 
 
 ## To run the Open Field Varient
@@ -48,9 +48,16 @@ pip install pygame
 ` to run the script.
 3. You should get the Hello message from the pygame community in the terminal and the game application window shall now open.
 4. Select the size of the board you wish to play on.
+![Open Field Home](/img/6.OpenFieldHome.jpg)
 5. Select the AI_algo to use. Due to **computational constraints**, these algo might take longer to generate an output (or might not generate at all). So kindly use the ones mentioned.
+![Grid Selected](/img/7.GridSelected.jpg)
 6. Next steps are same as the above game.
+![Algo Selected](/img/8.AlgoSelected.jpg)
+![User Wins](/img/9.UserWin.jpg)
 
+### Notice the High Computation time required for Alpha-Beta Pruning algo for 4x4 grid
+
+![High Computational Time](/img/10.ComputTime.jpg)
 
 -----
 
