@@ -1,5 +1,5 @@
 import random
-from TicTacToe_AI import *
+from OpenField_TTT import *
 # if AI turn isMax = True
 
 

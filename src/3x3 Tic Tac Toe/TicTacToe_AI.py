@@ -2,6 +2,7 @@ import pygame
 import time
 import platform
 import sys
+import random
 from math import inf
 from os import system
 from random import choice
@@ -9,6 +10,7 @@ from pygame.locals import *
 from AI_algo import *
 
 pygame.init()
+pygame.font.init()
 # global variables
 
 WIDTH = 400
@@ -28,7 +30,21 @@ NORMAL_COLOR = pygame.Color('tan2')
 HOVER_COLOR = pygame.Color('tan3')
 ACTIVE_COLOR = pygame.Color('forestgreen')
 
-FONT = pygame.font.SysFont('Comic Sans MS', 20)
+"""
+the static files can be put in a single folder and be accessed using a relative path.
+but this will create problems when building the executable, as there all the files get sourced from the root folder.
+to prevent this I have kept the static files in the same folder
+"""
+# FONT_TITLE = pygame.font.Font("../static/ZealotOutline-rnMy.ttf", 40)
+# FONT_SCORE = pygame.font.Font("../static/Gallant-2O1r3.ttf", 40)
+# FONT_TEXT = pygame.font.Font("../static/TicTacToe.ttf", 40)
+# FONT_BTN = pygame.font.Font("../static/FrostbiteBossFight-dL0Z.ttf", 30)
+FONT_TITLE = pygame.font.Font("ZealotOutline-rnMy.ttf", 40)
+FONT_SCORE = pygame.font.Font("Gallant-2O1r3.ttf", 40)
+FONT_TEXT = pygame.font.Font("TicTacToe.ttf", 40)
+FONT_BTN = pygame.font.Font("FrostbiteBossFight-dL0Z.ttf", 30)
+# FONT_TITLE.set_bold(True)
+# FONT = pygame.font.SysFont('Comic Sans MS', 20)
 TTT = [[None]*3, [None]*3, [None]*3]
 
 
@@ -40,6 +56,8 @@ CLOCK = pygame.time.Clock()
 # load the images/sprites
 x_img = pygame.image.load("X.png")
 o_img = pygame.image.load("O.png")
+# x_img = pygame.image.load("../static/X.png")
+# o_img = pygame.image.load("../static/O.png")
 
 # resize to proper scale
 x_img = pygame.transform.scale(x_img, (80, 80))
@@ -66,7 +84,7 @@ def create_button(x, y, w, h, text, callback):
     """
     # The button is a dictionary consisting of the rect, text,
     # text rect, color and the callback function.
-    text_surf = FONT.render(text, True, BLACK)
+    text_surf = FONT_BTN.render(text, True, BLACK)
     button_rect = pygame.Rect(x, y, w, h)
     text_rect = text_surf.get_rect(center=button_rect.center)
     button = {
@@ -81,7 +99,7 @@ def create_button(x, y, w, h, text, callback):
 
 def create_title_rect(x, y, w, h, text):
 
-    text_surf = FONT.render(text, True, TEXT_COLOR)
+    text_surf = FONT_TITLE.render(text, True, TEXT_COLOR)
     button_rect = pygame.Rect(x, y, w, h)
     text_rect = text_surf.get_rect(center=button_rect.center)
     button = {
@@ -95,7 +113,7 @@ def create_title_rect(x, y, w, h, text):
 
 def create_text_rect(x, y, w, h, text):
 
-    text_surf = FONT.render(text, True, WHITE)
+    text_surf = FONT_TEXT.render(text, True, WHITE)
     button_rect = pygame.Rect(x, y, w, h)
     text_rect = text_surf.get_rect(center=button_rect.center)
     button = {
@@ -192,8 +210,9 @@ def print_status(playerTurn, isOver, winner, screen):
             msg = "Game Tied"
 
     # render(text, antialias, color, background=None) -> Surface
-    font = pygame.font.SysFont('Comic Sans MS', 30)
-    text = font.render(msg, 1, (255, 255, 255))
+    # font = pygame.font.SysFont('Comic Sans MS', 30)
+    pygame.display.update()
+    text = FONT_SCORE.render(msg, 1, (255, 255, 255))
 
     # rendered msg on the screen
     screen.fill((0, 0, 0,), (0, 400, 500, 100))
@@ -462,7 +481,7 @@ def main():
     terminal_state = False
 
     # buttons to be used in the opening screen
-    title = create_title_rect(30, 15, 350, 70, 'Tic Tac Toe')
+    title = create_title_rect(20, 15, 370, 70, 'Tic Tac Toe')
     title_algo = create_text_rect(30, 80, 350, 70, 'Choose Algorithm')
     ai_butn_1 = create_button(30, 150, 150, 80, 'Minimax', get_algo_1)
     ai_butn_2 = create_button(230, 150, 150, 80, 'AlphaBeta', get_algo_2)
@@ -505,7 +524,7 @@ def main():
                             if button['rect'].collidepoint(event.pos):
                                 button['color'] = ACTIVE_COLOR
                                 ai_algo = button['callback']()
-                                print(ai_algo)
+                                print("Algo # selected :", ai_algo)
 
                 elif event.type == pygame.MOUSEMOTION:
                     for button in button_list:

@@ -1,10 +1,9 @@
 import pygame
 import time
-import random
+from random import choice
 import platform
-from math import floor
 import sys
-from math import inf
+from math import floor, inf
 from os import system
 from pygame.locals import *
 from AI_algo_custom import *
@@ -17,6 +16,11 @@ HEIGHT = 400
 # size of the tic tac toe grid (default 3x3)
 SIZE = 3
 TTT = [[None]*3, [None]*3, [None]*3]
+
+# initialize pygame window
+pygame.init()
+FPS = 30
+CLOCK = pygame.time.Clock()
 
 # colours
 WHITE = (255, 255, 255)
@@ -33,16 +37,22 @@ NORMAL_COLOR = pygame.Color('tan2')
 HOVER_COLOR = pygame.Color('tan3')
 ACTIVE_COLOR = pygame.Color('forestgreen')
 
-FONT = pygame.font.SysFont('Comic Sans MS', 18)
-
-# initialize pygame window
-pygame.init()
-FPS = 30
-CLOCK = pygame.time.Clock()
+FONT_TITLE = pygame.font.Font("ZealotOutline-rnMy.ttf", 20)
+FONT_SCORE = pygame.font.Font("Gallant-2O1r3.ttf", 40)
+FONT_TEXT = pygame.font.Font("TicTacToe.ttf", 40)
+FONT_BTN = pygame.font.Font("FrostbiteBossFight-dL0Z.ttf", 30)
+# FONT_TITLE = pygame.font.Font("../static/ZealotOutline-rnMy.ttf", 20)
+# FONT_SCORE = pygame.font.Font("../static/Gallant-2O1r3.ttf", 40)
+# FONT_TEXT = pygame.font.Font("../static/TicTacToe.ttf", 40)
+# FONT_BTN = pygame.font.Font("../static/FrostbiteBossFight-dL0Z.ttf", 30)
+# FONT_TITLE.set_bold(True)
+FONT = pygame.font.SysFont('Comic Sans MS', 20)
 
 # load the images/sprites
 x_img = pygame.image.load("X.png")
 o_img = pygame.image.load("O.png")
+# x_img = pygame.image.load("../static/X.png")
+# o_img = pygame.image.load("../static/O.png")
 
 # resize to proper scale
 x_img = pygame.transform.scale(
@@ -71,7 +81,7 @@ def create_button(x, y, w, h, text, callback):
     """
     # The button is a dictionary consisting of the rect, text,
     # text rect, color and the callback function.
-    text_surf = FONT.render(text, True, BLACK)
+    text_surf = FONT_BTN.render(text, True, BLACK)
     button_rect = pygame.Rect(x, y, w, h)
     text_rect = text_surf.get_rect(center=button_rect.center)
     button = {
@@ -86,7 +96,7 @@ def create_button(x, y, w, h, text, callback):
 
 def create_title_rect(x, y, w, h, text):
 
-    text_surf = FONT.render(text, True, TEXT_COLOR)
+    text_surf = FONT_TITLE.render(text, True, TEXT_COLOR)
     button_rect = pygame.Rect(x, y, w, h)
     text_rect = text_surf.get_rect(center=button_rect.center)
     button = {
@@ -100,7 +110,7 @@ def create_title_rect(x, y, w, h, text):
 
 def create_text_rect(x, y, w, h, text):
 
-    text_surf = FONT.render(text, True, WHITE)
+    text_surf = FONT_TEXT.render(text, True, BLACK)
     button_rect = pygame.Rect(x, y, w, h)
     text_rect = text_surf.get_rect(center=button_rect.center)
     button = {
@@ -213,8 +223,8 @@ def print_status(playerTurn, isOver, winner, screen):
             msg = "Game Tied"
 
     # render(text, antialias, color, background=None) -> Surface
-    font = pygame.font.SysFont("Comic Sans MS", 30)
-    text = font.render(msg, True, (255, 255, 255))
+    # font = pygame.font.SysFont("Comic Sans MS", 30)
+    text = FONT_SCORE.render(msg, True, (255, 255, 255))
 
     # rendered msg on the screen
     # fill (colour, position(x, y),size(wid, ht) )
@@ -486,9 +496,9 @@ def main():
     global WIDTH, HEIGHT, SIZE, TTT
 
     # buttons to be used in the opening screen
-    title = create_title_rect(30, 15, 350, 70, 'Open-Field Tic Tac Toe')
+    title = create_title_rect(20, 15, 370, 70, 'Open-Field Tic Tac Toe')
     title_size = create_text_rect(30, 80, 350, 70, 'Choose Grid Size')
-    title_algo = create_text_rect(30, 80, 350, 70, 'Choose Algorithm')
+    title_algo = create_text_rect(35, 80, 350, 70, 'Choose Algorithm')
 
     # (x, y, w, h, text, fun)
     grid_btn_4 = create_button(30, 150, 150, 40, "4x4", grid_size_4)
@@ -501,17 +511,17 @@ def main():
     grid_btn_list = [grid_btn_4, grid_btn_5, grid_btn_6,
                      grid_btn_7, grid_btn_8, grid_btn_9, grid_btn_10]
 
-    ai_btn_1 = create_button(75, 150, 250, 40, "Minimax (Don't)", get_algo_1)
+    ai_btn_1 = create_button(30, 150, 350, 40, "Minimax (Don't if size > 4)", get_algo_1)
     ai_btn_2 = create_button(
-        75, 200, 250, 40, "AlphaBeta (Don't)", get_algo_2)
+        30, 200, 350, 40, "AlphaBeta (Don't if size > 4)", get_algo_2)
     ai_btn_3 = create_button(
-        75, 250, 250, 40, "DepthLimit (Use This)", get_algo_3)
+        30, 250, 350, 40, "DepthLimit (Use This)", get_algo_3)
     ai_btn_4 = create_button(
-        75, 300, 250, 40, "Depth_AB (Use This)", get_algo_4)
+        30, 300, 350, 40, "Depth_AB (Use This)", get_algo_4)
     ai_btn_5 = create_button(
-        75, 350, 250, 40, "Experiment(Use This)", get_algo_5)
+        30, 350, 350, 40, "Experiment(Use This)", get_algo_5)
     ai_btn_6 = create_button(
-        75, 400, 250, 40, "Random (Use This)", get_algo_6)
+        30, 400, 350, 40, "Random (Use This)", get_algo_6)
 
     button_list = [ai_btn_1, ai_btn_2,
                    ai_btn_3, ai_btn_4, ai_btn_5, ai_btn_6]
