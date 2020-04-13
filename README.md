@@ -5,7 +5,7 @@ This is the simple game of 'Tic Tac Toe' also known as 'Noughts & Crosses'.
  GitHub Repo Link [ketan-lambat/AI_Games](https://github.com/ketan-lambat/AI_Games "ketan-lambat/AI_Games")
 >  This might return a 404 if the Repo is still private
 
-Gameplay Video URL [TicTacToe with AI](http://youtube.com "TicTacToe with AI")
+Gameplay Video URL [TicTacToe with AI](https://youtu.be/Q0U6IyicW9E "TicTacToe with AI")
 
 ------------
 
@@ -52,7 +52,9 @@ pip install pygame
 5. Select the AI_algo to use. Due to **computational constraints**, these algo might take longer to generate an output (or might not generate at all). So kindly use the ones mentioned.
 ![Grid Selected](/img/7.GridSelected.jpg)
 6. Next steps are same as the above game.
+
 ![Algo Selected](/img/8.AlgoSelected.jpg)
+
 ![User Wins](/img/9.UserWin.jpg)
 
 ### Notice the High Computation time required for Alpha-Beta Pruning algo for 4x4 grid
@@ -61,7 +63,7 @@ pip install pygame
 
 -----
 
-> (Optional) To build an executable file, you will need [cx_Freeze](https://anthony-tuininga.github.io/cx_Freeze/ "cx_Freeze")
+> (Optional) To build an executable file (if not already present), you will need [cx_Freeze](https://anthony-tuininga.github.io/cx_Freeze/ "cx_Freeze")
 
 `
 python -m pip install cx_Freeze
@@ -75,3 +77,8 @@ python setup.py build
 - This will create a build folder in the directory which should have a folder named *ext.____* 
 - Within this folder will be an executable file eg. *TicTacToe_AI.exe*
 - Double-click on this and the console output window and the game application window will open and you can play the game as mentioned above.
+
+------
+### Points to Note
+- Here we are sourcing the static files(images and fonts) from the same folder as the source code. We can also put them in a static folder and and access them using relative paths. But, this creates issues when building the executable file. So, to avoid that, the static folder method has not been used.
+- Each project has 3 python (.py) files, 2 are the source code and the setup.py file contains the instructions for building the executable.
