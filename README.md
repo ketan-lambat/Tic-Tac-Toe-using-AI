@@ -2,9 +2,17 @@
 
 This is the simple game of 'Tic Tac Toe' also known as 'Noughts & Crosses'.
 
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+
 GitHub Repo Link [ketan-lambat/AI_Games](https://github.com/ketan-lambat/AI_Games "ketan-lambat/AI_Games")
 
-> This might return a 404 if the Repo is still private
+![GitHub repo size](https://img.shields.io/github/repo-size/ketan-lambat/Tic-Tac-Toe-using-AI?style=plastic)
+
+<!-- > This might return a 404 if the Repo is still private -->
+
+-----
+
+[![forthebadge](https://forthebadge.com/images/badges/check-it-out.svg)](https://forthebadge.com)
 
 Gameplay Video URL [TicTacToe with AI](https://youtu.be/Q0U6IyicW9E "TicTacToe with AI")
 
@@ -78,3 +86,11 @@ First to setup the game dependencies, you need to install [pygame](https://www.p
 
 - Here we are sourcing the static files(images and fonts) from the same folder as the source code. We can also put them in a static folder and and access them using relative paths. But, this creates issues when building the executable file. So, to avoid that, the static folder method has not been used.
 - Each project has 3 python (.py) files, 2 are the source code and the setup.py file contains the instructions for building the executable.
+
+
+----
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
+
+![GitHub followers](https://img.shields.io/github/followers/ketan-lambat?label=Follow&style=social)
+
+![GitHub](https://img.shields.io/github/license/ketan-lambat/Tic-Tac-Toe-using-AI)
